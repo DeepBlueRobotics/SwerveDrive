@@ -1,6 +1,5 @@
 package org.team199.robot.commands;
 
-import org.team199.robot.Constants;
 import org.team199.robot.subsystems.Drivetrain;
 
 import edu.wpi.first.wpilibj.Joystick;
@@ -23,9 +22,9 @@ public class Drive extends CommandBase {
 
     @Override
     public void execute() {
-        double forward = Constants.DriveConstants.maxForward * -leftJoy.getY();
-        double strafe = Constants.DriveConstants.maxStrafe * leftJoy.getX();
-        double rotateClockwise = Constants.DriveConstants.maxRotate * rightJoy.getX();
+        double forward = -leftJoy.getY();
+        double strafe = leftJoy.getX();
+        double rotateClockwise = rightJoy.getX();
         drivetrain.drive(forward, strafe, rotateClockwise);
     }
 
