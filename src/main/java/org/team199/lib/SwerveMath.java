@@ -25,7 +25,7 @@ public class SwerveMath {
         return swerveContainers;
     }
 
-    // heading must be in radians.
+    // Heading must be in radians.
     public static SwerveContainer[] calculateSwerve(double forward, double strafe, double rotation, double heading, double length, double width) {
         double newForward = Math.cos(heading) * forward + Math.sin(heading) * strafe;
         double newStrafe = -Math.sin(heading) * forward + Math.cos(heading) * strafe;
@@ -33,13 +33,27 @@ public class SwerveMath {
     }
 
     public static double[] normalize(double[] x) {
+        // Determine the maximum maginitude of x.
         double maximum = -Double.MAX_VALUE;
         for (int i = 0; i < x.length; i++) {
-            if (x[i] > maximum) { maximum = x[i]; }
+            // Must take absolute value in order to preserve original signs.
+            if (Math.abs(x[i]) > maximum) { maximum = Math.abs(x[i]); }
         }
+
+        // If the maximum magnitude is less than 1, normalizing is unnecessary.
+        if ((maximum <= 1.0) && (0.0 < maximum)) { return x; }
+
         double[] normalized_x = new double[x.length];
-        for (int i = 0; i < x.length; i++) {
-            normalized_x[i] = x[i] / maximum;
+        // The only way the maximum is zero is if all of the elements are zero or near-zero.
+        if (maximum == 0.0) {
+            for (int i = 0; i < x.length; i++) {
+                normalized_x[i] = 0.0;
+            }
+        // Divide by the maximum magnitude to normalize.
+        } else {
+            for (int i = 0; i < x.length; i++) {
+                normalized_x[i] = x[i] / maximum;
+            }
         }
         return normalized_x;
     }
