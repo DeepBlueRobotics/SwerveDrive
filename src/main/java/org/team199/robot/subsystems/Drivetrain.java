@@ -60,10 +60,10 @@ public class Drivetrain extends SubsystemBase {
     // Decide whether or not to use custom implementation of swerve drive or use WPILib implementation using Odometry/Kinematics.
     if (implementation == SwerveImplementation.WPILib) {
       // Define the corners of the robot relative to the center of the robot using Translation2d objects.
-      Translation2d locationFL = new Translation2d(-Constants.DriveConstants.frameWidth / 2, Constants.DriveConstants.frameLength / 2);
-      Translation2d locationFR = new Translation2d(Constants.DriveConstants.frameWidth / 2, Constants.DriveConstants.frameLength / 2);
-      Translation2d locationBL = new Translation2d(-Constants.DriveConstants.frameWidth / 2, -Constants.DriveConstants.frameLength / 2);
-      Translation2d locationBR = new Translation2d(Constants.DriveConstants.frameWidth / 2, -Constants.DriveConstants.frameLength / 2);
+      Translation2d locationFL = new Translation2d(-Constants.DriveConstants.trackWidth / 2, Constants.DriveConstants.wheelBase / 2);
+      Translation2d locationFR = new Translation2d(Constants.DriveConstants.trackWidth / 2, Constants.DriveConstants.wheelBase / 2);
+      Translation2d locationBL = new Translation2d(-Constants.DriveConstants.trackWidth, -Constants.DriveConstants.wheelBase / 2);
+      Translation2d locationBR = new Translation2d(Constants.DriveConstants.trackWidth / 2, -Constants.DriveConstants.wheelBase / 2);
 
       kinematics = new SwerveDriveKinematics(locationFL, locationFR, locationBL, locationBR);
       odometry = new SwerveDriveOdometry(kinematics, new Rotation2d(Math.toRadians(getHeading())));
@@ -100,17 +100,17 @@ public class Drivetrain extends SubsystemBase {
       driveBR.set(driveSpeeds[3]);
 
       turnFL.set(moduleStates[0].angle.getRadians() / (2 * Math.PI));
-      turnFR.set(moduleStates[0].angle.getRadians() / (2 * Math.PI));
-      turnBL.set(moduleStates[0].angle.getRadians() / (2 * Math.PI));
-      turnBR.set(moduleStates[0].angle.getRadians() / (2 * Math.PI));
+      turnFR.set(moduleStates[1].angle.getRadians() / (2 * Math.PI));
+      turnBL.set(moduleStates[2].angle.getRadians() / (2 * Math.PI));
+      turnBR.set(moduleStates[3].angle.getRadians() / (2 * Math.PI));
     } else {
       SwerveContainer[] containers;
       if (SmartDashboard.getBoolean("Field Oriented", true)) {
         containers = SwerveMath.calculateSwerve(forward, strafe, rotation, Math.toRadians(getHeading()), 
-                                                Constants.DriveConstants.frameLength, Constants.DriveConstants.frameWidth);
+                                                Constants.DriveConstants.wheelBase, Constants.DriveConstants.trackWidth);
       } else {
         containers = SwerveMath.calculateSwerve(forward, strafe, rotation,
-                                                Constants.DriveConstants.frameLength, Constants.DriveConstants.frameWidth);
+                                                Constants.DriveConstants.wheelBase, Constants.DriveConstants.trackWidth);
       }
 
       driveFL.set(containers[0].speed);

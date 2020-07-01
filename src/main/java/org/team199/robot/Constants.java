@@ -23,8 +23,8 @@ public final class Constants {
     }
 
     public static final class DriveConstants {
-        public static final double frameLength = 0.0;
-        public static final double frameWidth = 0.0;
+        public static final double wheelBase = 0.0;
+        public static final double trackWidth = 0.0;
 
         // Maximum values for forward, strafe, and rotate clockwise values in m/s, m/s, and radians respectively.
         public static final double maxForward = 0.0;
