@@ -10,9 +10,6 @@
     "**/.classpath": true,
     "**/.project": true,
     "**/.settings": true,
-    "**/.factorypath": true,
-    "**/*~": true
-  },
-  "java.home": "/Library/Java/JavaVirtualMachines/jdk-11.jdk/Contents/Home",
-  "C_Cpp.default.configurationProvider": "vscode-wpilib"
+    "**/.factorypath": true
+  }
 }
