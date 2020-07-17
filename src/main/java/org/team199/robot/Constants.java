@@ -31,15 +31,28 @@ public final class Constants {
         public static final double maxStrafe = 0.0;
         public static final double maxRCW = Math.PI;
 
-        // kP, kI, and kD constants for PID Controllers in the order of front-left, front-right, back-left, back-right.
-        public static final double[] kP = {0.0, 0.0, 0.0, 0.0};
-        public static final double[] kI = {0.0, 0.0, 0.0, 0.0};
-        public static final double[] kD = {0.0, 0.0, 0.0, 0.0};
+        // kP, kI, and kD constants for drive motor controllers in the order of front-left, front-right, back-left, back-right.
+        public static final double[] driveKP = {20.0, 20.0, 20.0, 20.0};
+        public static final double[] driveKI = {0.1, 0.1, 0.1, 0.1};
+        public static final double[] driveKD = {0.0, 0.0, 0.0, 0.0};
+
+        // kP, kI, and kD constants for turn motor controllers in the order of front-left, front-right, back-left, back-right.
+        public static final double[] turnKP = {20.0, 20.0, 20.0, 20.0};
+        public static final double[] turnKI = {0.1, 0.1, 0.1, 0.1};
+        public static final double[] turnKD = {0.0, 0.0, 0.0, 0.0};
 
         // Drivetrain Characterization constants in the order of front-left, front-right, back-left, back-right.
         public static final double[] kVels = {0.0, 0.0, 0.0, 0.0};
         public static final double[] kAccels = {0.0, 0.0, 0.0, 0.0};
         public static final double[] kVolts = {0.0, 0.0, 0.0, 0.0};
+
+        public static final double kDriveModifier = 0.6;
+
+        // Whether or not steering should be reversed
+        public static final boolean reversedFL = true;
+        public static final boolean reversedFR = true;
+        public static final boolean reversedBL = true;
+        public static final boolean reversedBR = true;
 
         // All of the gearboxes are PG71. PG71 have a gearbox reduction of 71
         // PG71 drives 48 teeth gear which drives 40 teeth gear.

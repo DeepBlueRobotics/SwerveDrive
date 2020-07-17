@@ -62,12 +62,6 @@ public class MotorControllerFactory {
     talon.enableCurrentLimit(true);
     talon.configNeutralDeadband(0.001, 10);
     talon.setNeutralMode(NeutralMode.Brake);
-    // Set the PIDF values for the talon motor controller.
-    talon.config_kP(0, 20);
-    talon.config_kI(0, 0.01);
-    talon.config_kD(0, 0);
-    talon.config_kF(0, 0);
-
     return talon;
   }
 

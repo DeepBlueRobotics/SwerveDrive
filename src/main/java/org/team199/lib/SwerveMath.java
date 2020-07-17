@@ -150,4 +150,70 @@ public class SwerveMath {
         }
         return normalized_x;
     }
+
+    /**
+     * Computes the setpoint values for speed and angle for a singular motor controller.
+     * 
+     * @param normalizedSpeed   The desired normalized speed, from -1.0 to 1.0.
+     * @param angle             The desired angle, from -1.0 to 1.0.
+     * @param encoderPosition   The position of the <i> quadrature </i> turn motor controller.
+     * @param gearRatio         The gear ratio of the turn motor controller.
+     * @return An array of doubles containing the setpoint values in the order of speed then angle.
+     */
+    public static double[] computeSetpoints(double normalizedSpeed, double angle, double encoderPosition, double gearRatio) {
+        double newAngle = convertAngle(angle, encoderPosition, gearRatio);
+        double speed = normalizedSpeed;
+		
+		if (shouldReverse(newAngle, encoderPosition, gearRatio)) {
+			if (newAngle < 0) newAngle += 0.5;
+			else newAngle -= 0.5;
+			speed *= -1.0;
+		}
+		
+		return new double[]{speed, newAngle};
+    }
+
+    /**
+     * Determines whether or not the robot should take the reverse direction to get to angle. 
+     * e.g. if the robot was to turn 3&#960/2 radians clockwise, it would be better to turn &#960/2 radians counter-clockwsie.
+     * Credit to Team 100 for their code.
+     * 
+     * @param angle     The desired angle in radians.
+     * @param encoderPosition   The position of the <i> quadrature </i> turn motor controller.
+     * @param gearRatio        The gear ratio of the turn motor controller.
+     * @return A boolean representing whether the robot should reverse or not.
+     */
+    public static boolean shouldReverse(double angle, double encoderPosition, double gearRatio){
+        double convertedEncoder = (encoderPosition / gearRatio) % 1;
+        if (angle < 0) angle += 1;
+        
+        double longDifference = Math.abs(angle - convertedEncoder);
+        double difference = Math.min(longDifference, 1.0 - longDifference);
+
+        // If the difference is greater than 1/4, then return true (aka it is easier for it to turn around and go backwards than go forward)
+        if (difference > 0.25) return true;
+        else return false;
+    }
+
+    /**
+     * Converts the angle so that the robot can rotate in continuous circles. Credit to Team 100 for their code.
+     * 
+     * @param angle     The desired angle in radians.
+     * @param encoderPosition   The position of the <i> quadrature </i> turn motor controller.
+     * @param gearRatio        The gear ratio of the turn motor controller.
+     * @return The converted angle.
+     */
+    public static double convertAngle(double angle, double encoderPosition, double gearRatio) {
+        double encPos = encoderPosition / gearRatio;
+
+        double temp = angle;
+        temp += (int)encPos;
+
+        encPos = encPos % 1;
+
+        if ((angle - encPos) > 0.5) temp -= 1;
+        if ((angle - encPos) < -0.5) temp += 1;
+
+        return temp;
+    }
 }

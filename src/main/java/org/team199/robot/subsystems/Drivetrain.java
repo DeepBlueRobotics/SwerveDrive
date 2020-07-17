@@ -12,7 +12,7 @@ import org.team199.lib.SwerveMath;
 import org.team199.robot.Constants;
 
 import com.kauailabs.navx.frc.AHRS;
-
+import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 
 import edu.wpi.first.wpilibj.SerialPort;
@@ -91,6 +91,34 @@ public class Drivetrain extends SubsystemBase {
     this.implementation = implementation;
     gyro.reset();
     double heading = Math.toRadians(getHeading());
+
+    // Configure PID control constants for drive motor controllers
+    driveFL.config_kP(0, Constants.DriveConstants.driveKP[0]);
+    driveFR.config_kP(0, Constants.DriveConstants.driveKP[1]);
+    driveBL.config_kP(0, Constants.DriveConstants.driveKP[2]);
+    driveBR.config_kP(0, Constants.DriveConstants.driveKP[3]);
+    driveFL.config_kI(0, Constants.DriveConstants.driveKI[0]);
+    driveFR.config_kI(0, Constants.DriveConstants.driveKI[1]);
+    driveBL.config_kI(0, Constants.DriveConstants.driveKI[2]);
+    driveBR.config_kI(0, Constants.DriveConstants.driveKI[3]);
+    driveFL.config_kD(0, Constants.DriveConstants.driveKD[0]);
+    driveFR.config_kD(0, Constants.DriveConstants.driveKD[1]);
+    driveBL.config_kD(0, Constants.DriveConstants.driveKD[2]);
+    driveBR.config_kD(0, Constants.DriveConstants.driveKD[3]);
+
+    // Configure PID control constants for turn motor controllers
+    turnFL.config_kP(0, Constants.DriveConstants.turnKP[0]);
+    turnFR.config_kP(0, Constants.DriveConstants.turnKP[1]);
+    turnBL.config_kP(0, Constants.DriveConstants.turnKP[2]);
+    turnBR.config_kP(0, Constants.DriveConstants.turnKP[3]);
+    turnFL.config_kI(0, Constants.DriveConstants.turnKI[0]);
+    turnFR.config_kI(0, Constants.DriveConstants.turnKI[1]);
+    turnBL.config_kI(0, Constants.DriveConstants.turnKI[2]);
+    turnBR.config_kI(0, Constants.DriveConstants.turnKI[3]);
+    turnFL.config_kD(0, Constants.DriveConstants.turnKD[0]);
+    turnFR.config_kD(0, Constants.DriveConstants.turnKD[1]);
+    turnBL.config_kD(0, Constants.DriveConstants.turnKD[2]);
+    turnBR.config_kD(0, Constants.DriveConstants.turnKD[3]);
 
     // Decide whether or not to use custom implementation of swerve drive or use WPILib implementation using Odometry/Kinematics.
     if (implementation == SwerveImplementation.WPILib) {
@@ -224,16 +252,38 @@ FIRST Robotics Competition </a> by Tyler Veness for more information.
     // Drive speeds must be normalized so that they may be passed to motor controllers which require a domain of -1.0 to 1.0 for percentage control.
     driveSpeeds = SwerveMath.normalize(driveSpeeds);
 
-    driveFL.set(driveSpeeds[0]);
-    driveFR.set(driveSpeeds[1]);
-    driveBL.set(driveSpeeds[2]);
-    driveBR.set(driveSpeeds[3]);
+    /**************************************************
+      Compute setpoints for each side and use PID.
+    ***************************************************/
 
-    // Normalize angles as well.
-    turnFL.set(moduleStates[0].angle.getRadians() / (2 * Math.PI));
-    turnFR.set(moduleStates[1].angle.getRadians() / (2 * Math.PI));
-    turnBL.set(moduleStates[2].angle.getRadians() / (2 * Math.PI));
-    turnBR.set(moduleStates[3].angle.getRadians() / (2 * Math.PI));
+    double setpoints[] = SwerveMath.computeSetpoints(driveSpeeds[0], 
+                                                     moduleStates[0].angle.getRadians() / (2 * Math.PI),
+                                                     this.getQuadraturePosition(Side.FL),
+                                                     Constants.DriveConstants.kFL_GEAR_RATIO);
+    driveFL.set(ControlMode.PercentOutput, setpoints[0] * Constants.DriveConstants.kDriveModifier);
+    turnFL.set(ControlMode.Position, (Constants.DriveConstants.reversedFL ? -1 : 1) * setpoints[1] * Constants.DriveConstants.kFL_GEAR_RATIO);
+
+    setpoints = SwerveMath.computeSetpoints(driveSpeeds[1], 
+                                            moduleStates[1].angle.getRadians() / (2 * Math.PI),
+                                            this.getQuadraturePosition(Side.FR),
+                                            Constants.DriveConstants.kFR_GEAR_RATIO);
+    driveFR.set(ControlMode.PercentOutput, setpoints[0] * Constants.DriveConstants.kDriveModifier);
+    turnFR.set(ControlMode.Position, (Constants.DriveConstants.reversedFR ? -1 : 1) * setpoints[1] * Constants.DriveConstants.kFR_GEAR_RATIO);
+
+    setpoints = SwerveMath.computeSetpoints(driveSpeeds[2], 
+                                            moduleStates[2].angle.getRadians() / (2 * Math.PI),
+                                            this.getQuadraturePosition(Side.BL),
+                                            Constants.DriveConstants.kBL_GEAR_RATIO);
+    driveBL.set(ControlMode.PercentOutput, setpoints[2] * Constants.DriveConstants.kDriveModifier);
+    turnBL.set(ControlMode.Position, (Constants.DriveConstants.reversedBL ? -1 : 1) * setpoints[1] * Constants.DriveConstants.kBL_GEAR_RATIO);
+
+    setpoints = SwerveMath.computeSetpoints(driveSpeeds[3], 
+                                            moduleStates[3].angle.getRadians() / (2 * Math.PI),
+                                            this.getQuadraturePosition(Side.BR),
+                                            Constants.DriveConstants.kBR_GEAR_RATIO);
+    driveBR.set(ControlMode.PercentOutput, setpoints[0] * Constants.DriveConstants.kDriveModifier);
+    turnBR.set(ControlMode.Position, (Constants.DriveConstants.reversedBR ? -1 : 1) * setpoints[1] * Constants.DriveConstants.kBR_GEAR_RATIO);
+
   }
 
   /** 
