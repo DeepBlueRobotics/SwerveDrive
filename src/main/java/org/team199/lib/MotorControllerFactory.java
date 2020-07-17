@@ -17,9 +17,15 @@ import com.revrobotics.CANSparkMax.ExternalFollower;
 import com.revrobotics.CANSparkMax.IdleMode;
 
 /**
- * Add your docs here.
+ * Creates VictorSPX, TalonSRX, and SparkMax motor controllers assigned to specific CAN ids with ceratin config settings.
  */
 public class MotorControllerFactory {
+  /**
+   * Creates a VictorSPX motor controller.
+   * 
+   * @param port    The CAN id of the motor controller.
+   * @return A VictorSPX motor controller object.
+   */
   public static WPI_VictorSPX createVictor(int port) {
     WPI_VictorSPX victor = new WPI_VictorSPX(port);
 
@@ -34,6 +40,12 @@ public class MotorControllerFactory {
     return victor;
   }
 
+  /**
+   * Creates a TalonSRX motor controller.
+   * 
+   * @param port    The CAN id of the motor controller.
+   * @return A TalonSRX motor controller object.
+   */
   public static WPI_TalonSRX createTalon(int id) {
     WPI_TalonSRX talon = new WPI_TalonSRX(id);
 
@@ -50,10 +62,21 @@ public class MotorControllerFactory {
     talon.enableCurrentLimit(true);
     talon.configNeutralDeadband(0.001, 10);
     talon.setNeutralMode(NeutralMode.Brake);
+    // Set the PIDF values for the talon motor controller.
+    talon.config_kP(0, 20);
+    talon.config_kI(0, 0.01);
+    talon.config_kD(0, 0);
+    talon.config_kF(0, 0);
 
     return talon;
   }
 
+  /**
+   * Creates a SparkMax motor controller.
+   * 
+   * @param port    The CAN id of the motor controller.
+   * @return A SparkMax motor controller object.
+   */
   public static CANSparkMax createSparkMax(int id) {
     CANSparkMax spark = new CANSparkMax(id, CANSparkMaxLowLevel.MotorType.kBrushless);
 
