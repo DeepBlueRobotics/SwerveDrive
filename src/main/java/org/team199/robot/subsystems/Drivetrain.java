@@ -66,15 +66,15 @@ public class Drivetrain extends SubsystemBase {
   // Two sets of motor controllers, four for each side. 
   // Drive motor controllers move the robot forward/backward, while turn motor control the angle of the module.
   
-  private WPI_TalonSRX driveFL = MotorControllerFactory.createTalon(Constants.Ports.kDriveFrontLeft);
-  private WPI_TalonSRX driveFR = MotorControllerFactory.createTalon(Constants.Ports.kDriveFrontRight);
-  private WPI_TalonSRX driveBL = MotorControllerFactory.createTalon(Constants.Ports.kDriveBackLeft);
-  private WPI_TalonSRX driveBR = MotorControllerFactory.createTalon(Constants.Ports.kDriveBackRight);
+  public WPI_TalonSRX driveFL = MotorControllerFactory.createTalon(Constants.Ports.kDriveFrontLeft);
+  public WPI_TalonSRX driveFR = MotorControllerFactory.createTalon(Constants.Ports.kDriveFrontRight);
+  public WPI_TalonSRX driveBL = MotorControllerFactory.createTalon(Constants.Ports.kDriveBackLeft);
+  public WPI_TalonSRX driveBR = MotorControllerFactory.createTalon(Constants.Ports.kDriveBackRight);
 
-  private WPI_TalonSRX turnFL = MotorControllerFactory.createTalon(Constants.Ports.kTurnFrontLeft);
-  private WPI_TalonSRX turnFR = MotorControllerFactory.createTalon(Constants.Ports.kTurnFrontRight);
-  private WPI_TalonSRX turnBL = MotorControllerFactory.createTalon(Constants.Ports.kTurnBackLeft);
-  private WPI_TalonSRX turnBR = MotorControllerFactory.createTalon(Constants.Ports.kTurnBackRight);
+  public WPI_TalonSRX turnFL = MotorControllerFactory.createTalon(Constants.Ports.kTurnFrontLeft);
+  public WPI_TalonSRX turnFR = MotorControllerFactory.createTalon(Constants.Ports.kTurnFrontRight);
+  public WPI_TalonSRX turnBL = MotorControllerFactory.createTalon(Constants.Ports.kTurnBackLeft);
+  public WPI_TalonSRX turnBR = MotorControllerFactory.createTalon(Constants.Ports.kTurnBackRight);
 
   private double speeds[] = {0.0, 0.0, 0.0, 0.0};
 
@@ -259,30 +259,30 @@ FIRST Robotics Competition </a> by Tyler Veness for more information.
     double setpoints[] = SwerveMath.computeSetpoints(driveSpeeds[0], 
                                                      moduleStates[0].angle.getRadians() / (2 * Math.PI),
                                                      this.getQuadraturePosition(Side.FL),
-                                                     Constants.DriveConstants.kFL_GEAR_RATIO);
+                                                     Constants.DriveConstants.FL_GEAR_RATIO);
     driveFL.set(ControlMode.PercentOutput, setpoints[0] * Constants.DriveConstants.kDriveModifier);
-    turnFL.set(ControlMode.Position, (Constants.DriveConstants.reversedFL ? -1 : 1) * setpoints[1] * Constants.DriveConstants.kFL_GEAR_RATIO);
+    turnFL.set(ControlMode.Position, (Constants.DriveConstants.reversedFL ? -1 : 1) * setpoints[1] * Constants.DriveConstants.FL_GEAR_RATIO);
 
     setpoints = SwerveMath.computeSetpoints(driveSpeeds[1], 
                                             moduleStates[1].angle.getRadians() / (2 * Math.PI),
                                             this.getQuadraturePosition(Side.FR),
-                                            Constants.DriveConstants.kFR_GEAR_RATIO);
+                                            Constants.DriveConstants.FR_GEAR_RATIO);
     driveFR.set(ControlMode.PercentOutput, setpoints[0] * Constants.DriveConstants.kDriveModifier);
-    turnFR.set(ControlMode.Position, (Constants.DriveConstants.reversedFR ? -1 : 1) * setpoints[1] * Constants.DriveConstants.kFR_GEAR_RATIO);
+    turnFR.set(ControlMode.Position, (Constants.DriveConstants.reversedFR ? -1 : 1) * setpoints[1] * Constants.DriveConstants.FR_GEAR_RATIO);
 
     setpoints = SwerveMath.computeSetpoints(driveSpeeds[2], 
                                             moduleStates[2].angle.getRadians() / (2 * Math.PI),
                                             this.getQuadraturePosition(Side.BL),
-                                            Constants.DriveConstants.kBL_GEAR_RATIO);
+                                            Constants.DriveConstants.BL_GEAR_RATIO);
     driveBL.set(ControlMode.PercentOutput, setpoints[2] * Constants.DriveConstants.kDriveModifier);
-    turnBL.set(ControlMode.Position, (Constants.DriveConstants.reversedBL ? -1 : 1) * setpoints[1] * Constants.DriveConstants.kBL_GEAR_RATIO);
+    turnBL.set(ControlMode.Position, (Constants.DriveConstants.reversedBL ? -1 : 1) * setpoints[1] * Constants.DriveConstants.BL_GEAR_RATIO);
 
     setpoints = SwerveMath.computeSetpoints(driveSpeeds[3], 
                                             moduleStates[3].angle.getRadians() / (2 * Math.PI),
                                             this.getQuadraturePosition(Side.BR),
-                                            Constants.DriveConstants.kBR_GEAR_RATIO);
+                                            Constants.DriveConstants.BR_GEAR_RATIO);
     driveBR.set(ControlMode.PercentOutput, setpoints[0] * Constants.DriveConstants.kDriveModifier);
-    turnBR.set(ControlMode.Position, (Constants.DriveConstants.reversedBR ? -1 : 1) * setpoints[1] * Constants.DriveConstants.kBR_GEAR_RATIO);
+    turnBR.set(ControlMode.Position, (Constants.DriveConstants.reversedBR ? -1 : 1) * setpoints[1] * Constants.DriveConstants.BR_GEAR_RATIO);
 
   }
 
@@ -355,7 +355,7 @@ FIRST Robotics Competition </a> by Tyler Veness for more information.
    * @return The angle, in radians, of the swerve module.
   */
   public double getCurrentModuleAngle(Side side) {
-    // One full revolution is 1024 on the analog encoder, so a quarter revolution is 256.
+    // One full revolution is 1024 (more accurately MAX_ANALOG) on the analog encoder, so a quarter revolution is 256.
     // Therefore zero degrees is located at (TURN_ZERO - 256) mod 1024 since TURN_ZERO points to straight forward (90 degrees)
     // 1024 analog = 2 * pi radians so analog to radian is (2 * pi / 1024)((Current analog) - (TURN_ZERO - 256) mod 1024)
 
@@ -363,17 +363,17 @@ FIRST Robotics Competition </a> by Tyler Veness for more information.
     double angle;
     switch (side) {
       case FL:
-        reference = (Constants.DriveConstants.kFL_TURN_ZERO - 256) % 1024;
-        angle = ((Math.PI * 2) / 1024.0) * (turnFL.getSensorCollection().getAnalogIn() - reference);
+        reference = (int) (Constants.DriveConstants.FL_TURN_ZERO - 256) % Constants.DriveConstants.FL_MAX_ANALOG;
+        angle = ((Math.PI * 2) / Constants.DriveConstants.FL_MAX_ANALOG) * (turnFL.getSensorCollection().getAnalogIn() - reference);
       case FR:
-        reference = (Constants.DriveConstants.kFR_TURN_ZERO - 256) % 1024;
-        angle = ((Math.PI * 2) / 1024.0) * (turnFR.getSensorCollection().getAnalogIn() - reference);
+        reference = (int) (Constants.DriveConstants.FR_TURN_ZERO - 256) % Constants.DriveConstants.FR_MAX_ANALOG;
+        angle = ((Math.PI * 2) / Constants.DriveConstants.FR_MAX_ANALOG) * (turnFR.getSensorCollection().getAnalogIn() - reference);
       case BL:
-        reference = (Constants.DriveConstants.kBL_TURN_ZERO - 256) % 1024;
-        angle = ((Math.PI * 2) / 1024.0) * (turnBL.getSensorCollection().getAnalogIn() - reference);
+        reference = (int) (Constants.DriveConstants.BL_TURN_ZERO - 256) % Constants.DriveConstants.BL_MAX_ANALOG;
+        angle = ((Math.PI * 2) / Constants.DriveConstants.BL_MAX_ANALOG) * (turnBL.getSensorCollection().getAnalogIn() - reference);
       case BR:
-        reference = (Constants.DriveConstants.kBR_TURN_ZERO - 256) % 1024;
-        angle = ((Math.PI * 2) / 1024.0) * (turnBR.getSensorCollection().getAnalogIn() - reference);
+        reference = (int) (Constants.DriveConstants.BR_TURN_ZERO - 256) % Constants.DriveConstants.BR_MAX_ANALOG;
+        angle = ((Math.PI * 2) / Constants.DriveConstants.BR_MAX_ANALOG) * (turnBR.getSensorCollection().getAnalogIn() - reference);
       default:
         System.err.println("Error! Received value for side that does not equal an acceptable value.");
         angle = 0;

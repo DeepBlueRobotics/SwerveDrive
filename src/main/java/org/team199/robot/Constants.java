@@ -58,20 +58,31 @@ public final class Constants {
         // PG71 drives 48 teeth gear which drives 40 teeth gear.
         // Quadrature encoder has a pulse per revolution of 7. There are four transitions (low-to-high and high-to-low for A and B signals) per revolution
         // Gear ratio = 40/48 * 71 * 7 * 4 = 1656.666...
-        public static final double kFL_GEAR_RATIO = -1656.67;
-        public static final double kFR_GEAR_RATIO = -1656.67;
-        public static final double kBL_GEAR_RATIO = -1656.67;
-        public static final double kBR_GEAR_RATIO = -1656.67;
+        public static final double FL_GEAR_RATIO = -1656.67;
+        public static final double FR_GEAR_RATIO = -1656.67;
+        public static final double BL_GEAR_RATIO = -1656.67;
+        public static final double BR_GEAR_RATIO = -1656.67;
 
         // Analog encoder positions for each motor controller associated with all motor controllers facing forward.
         // All motors will be facing in the same direction toward the front of the robot.
-        public static final int kFL_TURN_ZERO = 758;
-        public static final int kFR_TURN_ZERO = 807;
-        public static final int kBL_TURN_ZERO = 406;
-        public static final int kBR_TURN_ZERO = 2217;
+        // Increasing the analog encoder is counter-clockwise, decreasing is clockwise.
+        public static final double FL_TURN_ZERO = 758.0;
+        public static final double FR_TURN_ZERO = 807.0;
+        public static final double BL_TURN_ZERO = 406.0;
+        public static final double BR_TURN_ZERO = 169.0;
+
+        // The actual analog encoder maxmimum positions, since 5V is not supplied to each of the analog encoders.
+        public static final int FL_MAX_ANALOG = 886;
+        public static final int FR_MAX_ANALOG = 882;
+        public static final int BL_MAX_ANALOG = 877;
+        public static final int BR_MAX_ANALOG = 880;
     }
 
     public static final class OI {
+        public enum ControlType {JOYSTICKS, GAMEPAD};
+
+        public static ControlType CONTROL_TYPE = ControlType.GAMEPAD;
+        public static final double LEFT_Y_THRESHOLD = 0.008;
         public static final class LeftJoy {
             public static final int kPort = 0;
         }
