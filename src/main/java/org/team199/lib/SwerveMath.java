@@ -120,38 +120,6 @@ public class SwerveMath {
     }
 
     /**
-     * Normalizes an array of doubles by dividing by the maximum element.
-     * 
-     * @param x     An array of doubles to be normalized.
-     * @return An array equal to the normalization of x.
-     */
-    public static double[] normalize(double[] x) {
-        // Determine the maximum maginitude of x.
-        double maximum = -Double.MAX_VALUE;
-        for (int i = 0; i < x.length; i++) {
-            // Must take absolute value in order to preserve original signs.
-            if (Math.abs(x[i]) > maximum) { maximum = Math.abs(x[i]); }
-        }
-
-        // If the maximum magnitude is less than 1, normalizing is unnecessary.
-        if ((maximum <= 1.0) && (0.0 < maximum)) { return x; }
-
-        double[] normalized_x = new double[x.length];
-        // The only way the maximum is zero is if all of the elements are zero or near-zero.
-        if (maximum == 0.0) {
-            for (int i = 0; i < x.length; i++) {
-                normalized_x[i] = 0.0;
-            }
-        // Divide by the maximum magnitude to normalize.
-        } else {
-            for (int i = 0; i < x.length; i++) {
-                normalized_x[i] = x[i] / maximum;
-            }
-        }
-        return normalized_x;
-    }
-
-    /**
      * Computes the setpoint values for speed and angle for a singular motor controller.
      * 
      * @param normalizedSpeed   The desired normalized speed, from -1.0 to 1.0.

@@ -13,8 +13,6 @@ import org.team199.robot.Constants;
 import org.team199.robot.SwerveModule;
 
 import com.kauailabs.navx.frc.AHRS;
-import com.ctre.phoenix.motorcontrol.ControlMode;
-import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 
 import edu.wpi.first.wpilibj.SerialPort;
 import edu.wpi.first.wpilibj.geometry.Pose2d;
@@ -221,12 +219,13 @@ FIRST Robotics Competition </a> by Tyler Veness for more information.
                                                 Constants.DriveConstants.wheelBase, Constants.DriveConstants.trackWidth);
       }
     }
+    double[] speeds = {moduleStates[0].speedMetersPerSecond, moduleStates[1].speedMetersPerSecond,
+                       moduleStates[2].speedMetersPerSecond, moduleStates[3].speedMetersPerSecond};
 
+    SwerveDriveKinematics.normalizeWheelSpeeds(moduleStates, Constants.DriveConstants.maxSpeed);
     double[] driveSpeeds = {moduleStates[0].speedMetersPerSecond, moduleStates[1].speedMetersPerSecond,
                             moduleStates[2].speedMetersPerSecond, moduleStates[3].speedMetersPerSecond};
-    speeds = driveSpeeds;
     // Drive speeds must be normalized so that they may be passed to motor controllers which require a domain of -1.0 to 1.0 for percentage control.
-    driveSpeeds = SwerveMath.normalize(driveSpeeds);
 
     moduleFL.move(driveSpeeds[0], moduleStates[0].angle.getRadians(), 
                   Constants.DriveConstants.kDriveModifier, Constants.DriveConstants.reversedFL);

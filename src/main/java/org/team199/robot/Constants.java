@@ -26,10 +26,12 @@ public final class Constants {
         public static final double wheelBase = 18.15;
         public static final double trackWidth = 17.75;
 
-        // maxForward and maxStrafe are in m/s, maxRCW is in radians.
+        // maxForward and maxStrafe are in m/s, maxRCW is in radians, and maxSpeed is in m/s.
+        // TODO: Find max values.
         public static final double maxForward = 0.0;
         public static final double maxStrafe = 0.0;
         public static final double maxRCW = Math.PI;
+        public static final double maxSpeed = 0.0;
 
         // kP, kI, and kD constants for drive motor controllers in the order of front-left, front-right, back-left, back-right.
         public static final double[] driveKP = {20.0, 20.0, 20.0, 20.0};

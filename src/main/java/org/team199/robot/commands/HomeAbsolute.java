@@ -1,6 +1,5 @@
 package org.team199.robot.commands;
 
-import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 
 import org.team199.robot.Constants;
