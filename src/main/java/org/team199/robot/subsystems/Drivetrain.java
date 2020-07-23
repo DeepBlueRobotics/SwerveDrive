@@ -10,6 +10,7 @@ package org.team199.robot.subsystems;
 import org.team199.lib.MotorControllerFactory;
 import org.team199.lib.SwerveMath;
 import org.team199.robot.Constants;
+import org.team199.robot.SwerveModule;
 
 import com.kauailabs.navx.frc.AHRS;
 import com.ctre.phoenix.motorcontrol.ControlMode;
@@ -32,19 +33,6 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
  * Contains the majority of methods associated with driving the robot or updating the position of the robot.
  */
 public class Drivetrain extends SubsystemBase {
-  /** Enum for representing each of the four corners of the drivetrain:
-   * 
-   * <p><ul>
-   * <li> FL - forward-left (or front-left).
-   * <li> FR - forward-right (or front-right).
-   * <li> BL - back-left (or back-left).
-   * <li> BR - back-right (or back-right).
-   * </ul><p>
-  */
-  public enum Side {
-    FL, FR, BL, BR;
-  }
-
   /** Controls which codebase to upon deploy:
    * 
    * <p><ul>
@@ -63,18 +51,18 @@ public class Drivetrain extends SubsystemBase {
   private final AHRS gyro = new AHRS(SerialPort.Port.kUSB1);
   private final boolean isGyroReversed = true;
 
-  // Two sets of motor controllers, four for each side. 
-  // Drive motor controllers move the robot forward/backward, while turn motor control the angle of the module.
-  
-  public WPI_TalonSRX driveFL = MotorControllerFactory.createTalon(Constants.Ports.kDriveFrontLeft);
-  public WPI_TalonSRX driveFR = MotorControllerFactory.createTalon(Constants.Ports.kDriveFrontRight);
-  public WPI_TalonSRX driveBL = MotorControllerFactory.createTalon(Constants.Ports.kDriveBackLeft);
-  public WPI_TalonSRX driveBR = MotorControllerFactory.createTalon(Constants.Ports.kDriveBackRight);
-
-  public WPI_TalonSRX turnFL = MotorControllerFactory.createTalon(Constants.Ports.kTurnFrontLeft);
-  public WPI_TalonSRX turnFR = MotorControllerFactory.createTalon(Constants.Ports.kTurnFrontRight);
-  public WPI_TalonSRX turnBL = MotorControllerFactory.createTalon(Constants.Ports.kTurnBackLeft);
-  public WPI_TalonSRX turnBR = MotorControllerFactory.createTalon(Constants.Ports.kTurnBackRight);
+  public SwerveModule moduleFL = new SwerveModule(MotorControllerFactory.createTalon(Constants.Ports.kDriveFrontLeft), 
+                                                  MotorControllerFactory.createTalon(Constants.Ports.kTurnFrontLeft), 
+                                                  Constants.DriveConstants.FL_GEAR_RATIO);
+  public SwerveModule moduleFR = new SwerveModule(MotorControllerFactory.createTalon(Constants.Ports.kDriveFrontRight), 
+                                                  MotorControllerFactory.createTalon(Constants.Ports.kTurnFrontRight), 
+                                                  Constants.DriveConstants.FR_GEAR_RATIO);
+  public SwerveModule moduleBL = new SwerveModule(MotorControllerFactory.createTalon(Constants.Ports.kDriveBackLeft), 
+                                                  MotorControllerFactory.createTalon(Constants.Ports.kTurnBackLeft), 
+                                                  Constants.DriveConstants.BL_GEAR_RATIO);
+  public SwerveModule moduleBR = new SwerveModule(MotorControllerFactory.createTalon(Constants.Ports.kDriveBackRight), 
+                                                  MotorControllerFactory.createTalon(Constants.Ports.kTurnBackRight), 
+                                                  Constants.DriveConstants.BR_GEAR_RATIO);
 
   private double speeds[] = {0.0, 0.0, 0.0, 0.0};
 
@@ -93,32 +81,16 @@ public class Drivetrain extends SubsystemBase {
     double heading = Math.toRadians(getHeading());
 
     // Configure PID control constants for drive motor controllers
-    driveFL.config_kP(0, Constants.DriveConstants.driveKP[0]);
-    driveFR.config_kP(0, Constants.DriveConstants.driveKP[1]);
-    driveBL.config_kP(0, Constants.DriveConstants.driveKP[2]);
-    driveBR.config_kP(0, Constants.DriveConstants.driveKP[3]);
-    driveFL.config_kI(0, Constants.DriveConstants.driveKI[0]);
-    driveFR.config_kI(0, Constants.DriveConstants.driveKI[1]);
-    driveBL.config_kI(0, Constants.DriveConstants.driveKI[2]);
-    driveBR.config_kI(0, Constants.DriveConstants.driveKI[3]);
-    driveFL.config_kD(0, Constants.DriveConstants.driveKD[0]);
-    driveFR.config_kD(0, Constants.DriveConstants.driveKD[1]);
-    driveBL.config_kD(0, Constants.DriveConstants.driveKD[2]);
-    driveBR.config_kD(0, Constants.DriveConstants.driveKD[3]);
+    moduleFL.setDrivePID(Constants.DriveConstants.driveKP[0], Constants.DriveConstants.driveKI[0], Constants.DriveConstants.driveKD[0]);
+    moduleFR.setDrivePID(Constants.DriveConstants.driveKP[1], Constants.DriveConstants.driveKI[1], Constants.DriveConstants.driveKD[1]);
+    moduleBL.setDrivePID(Constants.DriveConstants.driveKP[2], Constants.DriveConstants.driveKI[2], Constants.DriveConstants.driveKD[2]);
+    moduleBR.setDrivePID(Constants.DriveConstants.driveKP[3], Constants.DriveConstants.driveKI[3], Constants.DriveConstants.driveKD[3]);
 
     // Configure PID control constants for turn motor controllers
-    turnFL.config_kP(0, Constants.DriveConstants.turnKP[0]);
-    turnFR.config_kP(0, Constants.DriveConstants.turnKP[1]);
-    turnBL.config_kP(0, Constants.DriveConstants.turnKP[2]);
-    turnBR.config_kP(0, Constants.DriveConstants.turnKP[3]);
-    turnFL.config_kI(0, Constants.DriveConstants.turnKI[0]);
-    turnFR.config_kI(0, Constants.DriveConstants.turnKI[1]);
-    turnBL.config_kI(0, Constants.DriveConstants.turnKI[2]);
-    turnBR.config_kI(0, Constants.DriveConstants.turnKI[3]);
-    turnFL.config_kD(0, Constants.DriveConstants.turnKD[0]);
-    turnFR.config_kD(0, Constants.DriveConstants.turnKD[1]);
-    turnBL.config_kD(0, Constants.DriveConstants.turnKD[2]);
-    turnBR.config_kD(0, Constants.DriveConstants.turnKD[3]);
+    moduleFL.setTurnPID(Constants.DriveConstants.turnKP[0], Constants.DriveConstants.turnKI[0], Constants.DriveConstants.turnKD[0]);
+    moduleFR.setTurnPID(Constants.DriveConstants.turnKP[1], Constants.DriveConstants.turnKI[1], Constants.DriveConstants.turnKD[1]);
+    moduleBL.setTurnPID(Constants.DriveConstants.turnKP[2], Constants.DriveConstants.turnKI[2], Constants.DriveConstants.turnKD[2]);
+    moduleBR.setTurnPID(Constants.DriveConstants.turnKP[3], Constants.DriveConstants.turnKI[3], Constants.DriveConstants.turnKD[3]);
 
     // Decide whether or not to use custom implementation of swerve drive or use WPILib implementation using Odometry/Kinematics.
     if (implementation == SwerveImplementation.WPILib) {
@@ -144,10 +116,14 @@ FIRST Robotics Competition </a> by Tyler Veness for more information.
    */
   public void updateOdometry() {
     // There are no encoders on the drive motor controllers so assume current speed = desired speed
-    SwerveModuleState flState = new SwerveModuleState(speeds[0], new Rotation2d(getCurrentModuleAngle(Side.FL)));
-    SwerveModuleState frState = new SwerveModuleState(speeds[1], new Rotation2d(getCurrentModuleAngle(Side.FR)));
-    SwerveModuleState blState = new SwerveModuleState(speeds[2], new Rotation2d(getCurrentModuleAngle(Side.BL)));
-    SwerveModuleState brState = new SwerveModuleState(speeds[3], new Rotation2d(getCurrentModuleAngle(Side.BR)));
+    SwerveModuleState flState = new SwerveModuleState(speeds[0], 
+                                                      new Rotation2d(moduleFL.getModuleAngle((int) Constants.DriveConstants.FL_TURN_ZERO, Constants.DriveConstants.FL_MAX_ANALOG)));
+    SwerveModuleState frState = new SwerveModuleState(speeds[1], 
+                                                      new Rotation2d(moduleFR.getModuleAngle((int) Constants.DriveConstants.FR_TURN_ZERO, Constants.DriveConstants.FR_MAX_ANALOG)));
+    SwerveModuleState blState = new SwerveModuleState(speeds[2], 
+                                                      new Rotation2d(moduleBL.getModuleAngle((int) Constants.DriveConstants.BL_TURN_ZERO, Constants.DriveConstants.BL_MAX_ANALOG)));
+    SwerveModuleState brState = new SwerveModuleState(speeds[3], 
+                                                      new Rotation2d(moduleBR.getModuleAngle((int) Constants.DriveConstants.BR_TURN_ZERO, Constants.DriveConstants.BR_MAX_ANALOG)));
 
     if (implementation == SwerveImplementation.WPILib) {
       odometry.update(Rotation2d.fromDegrees(getHeading()), flState, frState, blState, brState);
@@ -192,22 +168,22 @@ FIRST Robotics Competition </a> by Tyler Veness for more information.
       odometry.getPoseMeters().getRotation().getRadians() : pose.getRotation().getRadians());
     
     // Display the position of the quadrature encoder.
-    SmartDashboard.putNumber("FL Quadrature Position", getQuadraturePosition(Side.FL));
-    SmartDashboard.putNumber("FR Quadrature Position", getQuadraturePosition(Side.FR));
-    SmartDashboard.putNumber("BL Quadrature Position", getQuadraturePosition(Side.BL));
-    SmartDashboard.putNumber("BR Quadrature Position", getQuadraturePosition(Side.BR));
+    SmartDashboard.putNumber("FL Quadrature Position", moduleFL.getQuadraturePosition());
+    SmartDashboard.putNumber("FR Quadrature Position", moduleFR.getQuadraturePosition());
+    SmartDashboard.putNumber("BL Quadrature Position", moduleBL.getQuadraturePosition());
+    SmartDashboard.putNumber("BR Quadrature Position", moduleBR.getQuadraturePosition());
 
     // Display the position of the analog encoder.
-    SmartDashboard.putNumber("FL Analog Position", getAnalogPosition(Side.FL));
-    SmartDashboard.putNumber("FR Analog Position", getAnalogPosition(Side.FR));
-    SmartDashboard.putNumber("BL Analog Position", getAnalogPosition(Side.BL));
-    SmartDashboard.putNumber("BR Analog Position", getAnalogPosition(Side.BR));
+    SmartDashboard.putNumber("FL Analog Position", moduleFL.getAnalogPosition());
+    SmartDashboard.putNumber("FR Analog Position", moduleFR.getAnalogPosition());
+    SmartDashboard.putNumber("BL Analog Position", moduleBL.getAnalogPosition());
+    SmartDashboard.putNumber("BR Analog Position", moduleBR.getAnalogPosition());
 
     // Display the module angle as calculated using the absolute encoder.
-    SmartDashboard.putNumber("FL Module Angle", getCurrentModuleAngle(Side.FL));
-    SmartDashboard.putNumber("FR Module Angle", getCurrentModuleAngle(Side.FR));
-    SmartDashboard.putNumber("BL Module Angle", getCurrentModuleAngle(Side.BL));
-    SmartDashboard.putNumber("BR Module Angle", getCurrentModuleAngle(Side.BR));
+    SmartDashboard.putNumber("FL Module Angle", moduleFL.getModuleAngle((int) Constants.DriveConstants.FL_TURN_ZERO, Constants.DriveConstants.FL_MAX_ANALOG));
+    SmartDashboard.putNumber("FR Module Angle", moduleFR.getModuleAngle((int) Constants.DriveConstants.FR_TURN_ZERO, Constants.DriveConstants.FR_MAX_ANALOG));
+    SmartDashboard.putNumber("BL Module Angle", moduleBL.getModuleAngle((int) Constants.DriveConstants.BL_TURN_ZERO, Constants.DriveConstants.BL_MAX_ANALOG));
+    SmartDashboard.putNumber("BR Module Angle", moduleBR.getModuleAngle((int) Constants.DriveConstants.BR_TURN_ZERO, Constants.DriveConstants.BR_MAX_ANALOG));
   }
 
   @Override
@@ -252,135 +228,14 @@ FIRST Robotics Competition </a> by Tyler Veness for more information.
     // Drive speeds must be normalized so that they may be passed to motor controllers which require a domain of -1.0 to 1.0 for percentage control.
     driveSpeeds = SwerveMath.normalize(driveSpeeds);
 
-    /**************************************************
-      Compute setpoints for each side and use PID.
-    ***************************************************/
-
-    double setpoints[] = SwerveMath.computeSetpoints(driveSpeeds[0], 
-                                                     moduleStates[0].angle.getRadians() / (2 * Math.PI),
-                                                     this.getQuadraturePosition(Side.FL),
-                                                     Constants.DriveConstants.FL_GEAR_RATIO);
-    driveFL.set(ControlMode.PercentOutput, setpoints[0] * Constants.DriveConstants.kDriveModifier);
-    turnFL.set(ControlMode.Position, (Constants.DriveConstants.reversedFL ? -1 : 1) * setpoints[1] * Constants.DriveConstants.FL_GEAR_RATIO);
-
-    setpoints = SwerveMath.computeSetpoints(driveSpeeds[1], 
-                                            moduleStates[1].angle.getRadians() / (2 * Math.PI),
-                                            this.getQuadraturePosition(Side.FR),
-                                            Constants.DriveConstants.FR_GEAR_RATIO);
-    driveFR.set(ControlMode.PercentOutput, setpoints[0] * Constants.DriveConstants.kDriveModifier);
-    turnFR.set(ControlMode.Position, (Constants.DriveConstants.reversedFR ? -1 : 1) * setpoints[1] * Constants.DriveConstants.FR_GEAR_RATIO);
-
-    setpoints = SwerveMath.computeSetpoints(driveSpeeds[2], 
-                                            moduleStates[2].angle.getRadians() / (2 * Math.PI),
-                                            this.getQuadraturePosition(Side.BL),
-                                            Constants.DriveConstants.BL_GEAR_RATIO);
-    driveBL.set(ControlMode.PercentOutput, setpoints[2] * Constants.DriveConstants.kDriveModifier);
-    turnBL.set(ControlMode.Position, (Constants.DriveConstants.reversedBL ? -1 : 1) * setpoints[1] * Constants.DriveConstants.BL_GEAR_RATIO);
-
-    setpoints = SwerveMath.computeSetpoints(driveSpeeds[3], 
-                                            moduleStates[3].angle.getRadians() / (2 * Math.PI),
-                                            this.getQuadraturePosition(Side.BR),
-                                            Constants.DriveConstants.BR_GEAR_RATIO);
-    driveBR.set(ControlMode.PercentOutput, setpoints[0] * Constants.DriveConstants.kDriveModifier);
-    turnBR.set(ControlMode.Position, (Constants.DriveConstants.reversedBR ? -1 : 1) * setpoints[1] * Constants.DriveConstants.BR_GEAR_RATIO);
-
-  }
-
-  /** 
-   * Returns the position of the quadrature encoder for a turn motor controller.
-   * @param side  The desired side of the drivetrain from which to get the quadrature encoder position.
-   * @return The position of the quadrature encoder.
-  */
-  public int getQuadraturePosition(Side side) {
-    switch (side) {
-      case FL:
-        return turnFL.getSensorCollection().getQuadraturePosition();
-      case FR:
-        return turnFR.getSensorCollection().getQuadraturePosition();
-      case BL:
-        return turnBL.getSensorCollection().getQuadraturePosition();
-      case BR:
-        return turnBR.getSensorCollection().getQuadraturePosition();
-      default:
-        System.err.println("Error! Received value for side that does not equal an acceptable value.");
-        return 0;
-    }
-  }
-
-   /** 
-   * Returns the velocity of the quadrature encoder for a turn motor controller.
-   * @param side  The desired side of the drivetrain from which to get the quadrature encoder velocity.
-   * @return The velocity of the quadrature encoder.
-  */
-   public int getQuadratureVelocity(Side side) {
-    switch (side) {
-      case FL:
-        return turnFL.getSensorCollection().getQuadratureVelocity();
-      case FR:
-        return turnFR.getSensorCollection().getQuadratureVelocity();
-      case BL:
-        return turnBL.getSensorCollection().getQuadratureVelocity();
-      case BR:
-        return turnBR.getSensorCollection().getQuadratureVelocity();
-      default:
-      System.err.println("Error! Received value for side that does not equal an acceptable value.");
-        return 0;
-    }
-  }
-
-  /** 
-   * Returns the position of the analog encoder for a turn motor controller.
-   * @param side  The desired side of the drivetrain from which to get the analog encoder position.
-   * @return The position of the analog encoder.
-  */
-  public int getAnalogPosition(Side side) {
-    switch (side) {
-      case FL:
-        return turnFL.getSensorCollection().getAnalogIn();
-      case FR:
-        return turnFR.getSensorCollection().getAnalogIn();
-      case BL:
-        return turnBL.getSensorCollection().getAnalogIn();
-      case BR:
-        return turnBR.getSensorCollection().getAnalogIn();
-      default:
-        System.err.println("Error! Received value for side that does not equal an acceptable value.");
-        return 0;
-    }
-  }
-
-  /** 
-   * Returns the angle of the analog encoder for a turn motor controller.
-   * @param side  The desired side of the drivetrain from which to get the angle of sthe swerve module.
-   * @return The angle, in radians, of the swerve module.
-  */
-  public double getCurrentModuleAngle(Side side) {
-    // One full revolution is 1024 (more accurately MAX_ANALOG) on the analog encoder, so a quarter revolution is 256.
-    // Therefore zero degrees is located at (TURN_ZERO - 256) mod 1024 since TURN_ZERO points to straight forward (90 degrees)
-    // 1024 analog = 2 * pi radians so analog to radian is (2 * pi / 1024)((Current analog) - (TURN_ZERO - 256) mod 1024)
-
-    int reference;
-    double angle;
-    switch (side) {
-      case FL:
-        reference = (int) (Constants.DriveConstants.FL_TURN_ZERO - 256) % Constants.DriveConstants.FL_MAX_ANALOG;
-        angle = ((Math.PI * 2) / Constants.DriveConstants.FL_MAX_ANALOG) * (turnFL.getSensorCollection().getAnalogIn() - reference);
-      case FR:
-        reference = (int) (Constants.DriveConstants.FR_TURN_ZERO - 256) % Constants.DriveConstants.FR_MAX_ANALOG;
-        angle = ((Math.PI * 2) / Constants.DriveConstants.FR_MAX_ANALOG) * (turnFR.getSensorCollection().getAnalogIn() - reference);
-      case BL:
-        reference = (int) (Constants.DriveConstants.BL_TURN_ZERO - 256) % Constants.DriveConstants.BL_MAX_ANALOG;
-        angle = ((Math.PI * 2) / Constants.DriveConstants.BL_MAX_ANALOG) * (turnBL.getSensorCollection().getAnalogIn() - reference);
-      case BR:
-        reference = (int) (Constants.DriveConstants.BR_TURN_ZERO - 256) % Constants.DriveConstants.BR_MAX_ANALOG;
-        angle = ((Math.PI * 2) / Constants.DriveConstants.BR_MAX_ANALOG) * (turnBR.getSensorCollection().getAnalogIn() - reference);
-      default:
-        System.err.println("Error! Received value for side that does not equal an acceptable value.");
-        angle = 0;
-    }
-    
-    if (angle < 0) return 2 * Math.PI + angle;
-    else return angle;
+    moduleFL.move(driveSpeeds[0], moduleStates[0].angle.getRadians(), 
+                  Constants.DriveConstants.kDriveModifier, Constants.DriveConstants.reversedFL);
+    moduleFR.move(driveSpeeds[1], moduleStates[1].angle.getRadians(), 
+                  Constants.DriveConstants.kDriveModifier, Constants.DriveConstants.reversedFR);
+    moduleBL.move(driveSpeeds[2], moduleStates[2].angle.getRadians(), 
+                  Constants.DriveConstants.kDriveModifier, Constants.DriveConstants.reversedBL);
+    moduleBR.move(driveSpeeds[3], moduleStates[3].angle.getRadians(), 
+                  Constants.DriveConstants.kDriveModifier, Constants.DriveConstants.reversedBR);
   }
 
   /**
