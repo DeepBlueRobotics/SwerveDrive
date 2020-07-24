@@ -49,18 +49,10 @@ public class Drivetrain extends SubsystemBase {
   private final AHRS gyro = new AHRS(SerialPort.Port.kUSB1);
   private final boolean isGyroReversed = true;
 
-  public SwerveModule moduleFL = new SwerveModule(MotorControllerFactory.createTalon(Constants.Ports.kDriveFrontLeft), 
-                                                  MotorControllerFactory.createTalon(Constants.Ports.kTurnFrontLeft), 
-                                                  Constants.DriveConstants.FL_GEAR_RATIO);
-  public SwerveModule moduleFR = new SwerveModule(MotorControllerFactory.createTalon(Constants.Ports.kDriveFrontRight), 
-                                                  MotorControllerFactory.createTalon(Constants.Ports.kTurnFrontRight), 
-                                                  Constants.DriveConstants.FR_GEAR_RATIO);
-  public SwerveModule moduleBL = new SwerveModule(MotorControllerFactory.createTalon(Constants.Ports.kDriveBackLeft), 
-                                                  MotorControllerFactory.createTalon(Constants.Ports.kTurnBackLeft), 
-                                                  Constants.DriveConstants.BL_GEAR_RATIO);
-  public SwerveModule moduleBR = new SwerveModule(MotorControllerFactory.createTalon(Constants.Ports.kDriveBackRight), 
-                                                  MotorControllerFactory.createTalon(Constants.Ports.kTurnBackRight), 
-                                                  Constants.DriveConstants.BR_GEAR_RATIO);
+  public SwerveModule moduleFL;
+  public SwerveModule moduleFR;
+  public SwerveModule moduleBL;
+  public SwerveModule moduleBR;
 
   private double speeds[] = {0.0, 0.0, 0.0, 0.0};
 
@@ -77,6 +69,20 @@ public class Drivetrain extends SubsystemBase {
     this.implementation = implementation;
     gyro.reset();
     double heading = Math.toRadians(getHeading());
+
+    // Initialize SwerveModules
+    moduleFL = new SwerveModule(MotorControllerFactory.createTalon(Constants.Ports.kDriveFrontLeft), 
+                                MotorControllerFactory.createTalon(Constants.Ports.kTurnFrontLeft), 
+                                Constants.DriveConstants.FL_GEAR_RATIO);
+    moduleFR = new SwerveModule(MotorControllerFactory.createTalon(Constants.Ports.kDriveFrontRight), 
+                                MotorControllerFactory.createTalon(Constants.Ports.kTurnFrontRight), 
+                                Constants.DriveConstants.FR_GEAR_RATIO);
+    moduleBL = new SwerveModule(MotorControllerFactory.createTalon(Constants.Ports.kDriveBackLeft), 
+                                MotorControllerFactory.createTalon(Constants.Ports.kTurnBackLeft), 
+                                Constants.DriveConstants.BL_GEAR_RATIO);
+    moduleBR = new SwerveModule(MotorControllerFactory.createTalon(Constants.Ports.kDriveBackRight), 
+                                MotorControllerFactory.createTalon(Constants.Ports.kTurnBackRight), 
+                                Constants.DriveConstants.BR_GEAR_RATIO);
 
     // Configure PID control constants for drive motor controllers
     moduleFL.setDrivePID(Constants.DriveConstants.driveKP[0], Constants.DriveConstants.driveKI[0], Constants.DriveConstants.driveKD[0]);
@@ -126,8 +132,8 @@ FIRST Robotics Competition </a> by Tyler Veness for more information.
     if (implementation == SwerveImplementation.WPILib) {
       odometry.update(Rotation2d.fromDegrees(getHeading()), flState, frState, blState, brState);
     } else {
-      // Do the inverse of the swerve math; rather than calculate swerve module states from chassis speeds, calculate chassis speeds from swerve module states.
-      double temp[]= new double[3];
+      // Do the inverse of swerve math; rather than calculate swerve module states from chassis speeds, calculate chassis speeds from swerve module states.
+      double temp[] = new double[3];
       if (SmartDashboard.getBoolean("Field Oriented", true)) {
         temp = SwerveMath.inverseSwerve(Constants.DriveConstants.wheelBase,
                                         Constants.DriveConstants.trackWidth, 
@@ -219,8 +225,9 @@ FIRST Robotics Competition </a> by Tyler Veness for more information.
                                                 Constants.DriveConstants.wheelBase, Constants.DriveConstants.trackWidth);
       }
     }
-    double[] speeds = {moduleStates[0].speedMetersPerSecond, moduleStates[1].speedMetersPerSecond,
-                       moduleStates[2].speedMetersPerSecond, moduleStates[3].speedMetersPerSecond};
+    // Save speeds before they are normalized for odometry purposes.
+    speeds = new double[]{moduleStates[0].speedMetersPerSecond, moduleStates[1].speedMetersPerSecond,
+                          moduleStates[2].speedMetersPerSecond, moduleStates[3].speedMetersPerSecond};
 
     SwerveDriveKinematics.normalizeWheelSpeeds(moduleStates, Constants.DriveConstants.maxSpeed);
     double[] driveSpeeds = {moduleStates[0].speedMetersPerSecond, moduleStates[1].speedMetersPerSecond,

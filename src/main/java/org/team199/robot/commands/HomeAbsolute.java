@@ -36,7 +36,7 @@ public class HomeAbsolute extends InstantCommand {
 
         // Change the current quadrature encoder position to the difference between the zeroed position and the current position, as measured by the analog encoder.
         // Difference is in analog encoder degrees which must be converted to quadrature encoder ticks.
-        // Max value of the analog encoder is 1023, min value is 0.
+        // Max value of the analog encoder is MAX_ANALOG, min value is 0.
         flQuadPos = (Math.abs(Constants.DriveConstants.FL_GEAR_RATIO) / Constants.DriveConstants.FL_MAX_ANALOG) * 
                     (drivetrain.moduleFL.getAnalogPosition() - Constants.DriveConstants.FL_TURN_ZERO);
         frQuadPos = (Math.abs(Constants.DriveConstants.FR_GEAR_RATIO) / Constants.DriveConstants.FR_MAX_ANALOG) * 

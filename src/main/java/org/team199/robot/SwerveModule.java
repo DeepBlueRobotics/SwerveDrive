@@ -19,17 +19,18 @@ public class SwerveModule {
 
     public void move(double normalizedSpeed, double angle, double maximumSpeed, double driveModifier, boolean reversed) {
         double setpoints[] = SwerveMath.computeSetpoints(normalizedSpeed / maximumSpeed,
-                                                        angle / (2 * Math.PI),
-                                                        this.getQuadraturePosition(),
-                                                        gearRatio);
-        this.setSpeed(setpoints[0], driveModifier);
-        this.setAngle(setpoints[1], reversed);
+                                                         angle / (2 * Math.PI),
+                                                         getQuadraturePosition(),
+                                                         gearRatio);
+        setSpeed(setpoints[0], driveModifier);
+        setAngle(setpoints[1], reversed);
     }
 
     public void setSpeed(double speed, double driveModifier) {
         drive.set(ControlMode.PercentOutput, speed * driveModifier);
     }
 
+    // angle must be between -0.5 and 0.5
     public void setAngle(double angle, boolean reversed) {
         turn.set(ControlMode.Position, (reversed ? -1 : 1) * angle * gearRatio);
     }
@@ -73,7 +74,7 @@ public class SwerveModule {
         // Therefore zero degrees is located at (TURN_ZERO - MAX_ANALOG / 4) mod MAX_ANALOG (call this reference) since TURN_ZERO points to straight forward (90 degrees)
         // MAX_ANALOG analog = 2 * pi radians so analog to radian is (2 * pi / MAX_ANALOG)(Current analog - reference)
         int reference = (int) (TURN_ZERO - (MAX_ANALOG / 4)) % MAX_ANALOG;
-        double angle = ((Math.PI * 2) / MAX_ANALOG) * (turn.getSensorCollection().getAnalogIn() - reference);
+        double angle = ((Math.PI * 2) / MAX_ANALOG) * (getAnalogPosition() - reference);
         if (angle < 0) return 2 * Math.PI + angle;
         else return angle;
     }

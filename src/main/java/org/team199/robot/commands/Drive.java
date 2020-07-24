@@ -35,17 +35,16 @@ public class Drive extends CommandBase {
         double forward, strafe, rotateClockwise;
         if (Constants.OI.CONTROL_TYPE == Constants.OI.ControlType.JOYSTICKS) {
             // Inputs to drive are m/s, so joysticks are percentage values of the maximum forward, strafe, and rcw.
-            if (Math.abs(leftJoy.getY()) < Constants.OI.LEFT_Y_THRESHOLD) forward = 0.0;
+            if (Math.abs(leftJoy.getY()) <= Constants.OI.LEFT_Y_THRESHOLD) forward = 0.0;
             else forward = Constants.DriveConstants.maxForward * -leftJoy.getY();     // Left joy Y is inverted.
             strafe = Constants.DriveConstants.maxStrafe * leftJoy.getX();
             rotateClockwise = Constants.DriveConstants.maxRCW * rightJoy.getX();
         } else {
             // Inputs to drive are m/s, so joysticks are percentage values of the maximum forward, strafe, and rcw.
-            if (Math.abs(gamepad.getRawAxis(1)) < Constants.OI.LEFT_Y_THRESHOLD) forward = 0.0;
+            if (Math.abs(gamepad.getRawAxis(1)) <= Constants.OI.LEFT_Y_THRESHOLD) forward = 0.0;
             else forward = Constants.DriveConstants.maxForward * -gamepad.getRawAxis(1);     // Left joy Y is inverted.
             strafe = Constants.DriveConstants.maxStrafe * gamepad.getRawAxis(0);
             rotateClockwise = Constants.DriveConstants.maxRCW * gamepad.getRawAxis(2);
-            drivetrain.drive(forward, strafe, rotateClockwise);
         }
         drivetrain.drive(forward, strafe, rotateClockwise);
     }

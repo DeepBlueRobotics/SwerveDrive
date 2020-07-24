@@ -23,15 +23,16 @@ public final class Constants {
     }
 
     public static final class DriveConstants {
-        public static final double wheelBase = 18.15;
-        public static final double trackWidth = 17.75;
+        public static final double wheelBase = 18.15 / 3.28084;
+        public static final double trackWidth = 17.75 / 3.28084;
 
+        // All of these values should be replaced with more accurate values
         // maxForward and maxStrafe are in m/s, maxRCW is in radians, and maxSpeed is in m/s.
-        // TODO: Find max values.
-        public static final double maxForward = 0.0;
-        public static final double maxStrafe = 0.0;
-        public static final double maxRCW = Math.PI;
-        public static final double maxSpeed = 0.0;
+        public static final double maxForward = 2.7;
+        public static final double maxStrafe = 2.7;
+        public static final double maxRCW = Math.PI / 2;
+        // ASSUMPTION: Max speed can be calculated by taking assuming no rotation and using max forward and strafe
+        public static final double maxSpeed = Math.sqrt(Math.pow(maxForward, 2) + Math.pow(maxStrafe, 2));
 
         // kP, kI, and kD constants for drive motor controllers in the order of front-left, front-right, back-left, back-right.
         public static final double[] driveKP = {20.0, 20.0, 20.0, 20.0};
@@ -87,6 +88,10 @@ public final class Constants {
         public static final double LEFT_Y_THRESHOLD = 0.008;
         public static final class LeftJoy {
             public static final int kPort = 0;
+
+            // Joystick buttons
+            public static final int fieldOrientedToggle = 2;
+            public static final int homeAbsolute = 3;
         }
 
         public static final class RightJoy {
@@ -95,6 +100,10 @@ public final class Constants {
 
         public static final class Manipulator {        
             public static final int kPort = 2;
+
+            // Joystick buttons
+            public static final int fieldOrientedToggle = 2;
+            public static final int homeAbsolute = 3;
         }
     }
 }

@@ -77,7 +77,7 @@ public class SwerveMath {
         // Calculate helper variables
         double a = states[4].speedMetersPerSecond * Math.cos(states[4].angle.getRadians());
         double b = states[1].speedMetersPerSecond * Math.cos(states[1].angle.getRadians());
-        double c = states[2].speedMetersPerSecond * Math.sin(states[4].angle.getRadians());
+        double c = states[2].speedMetersPerSecond * Math.sin(states[2].angle.getRadians());
         double d = states[3].speedMetersPerSecond * Math.sin(states[3].angle.getRadians());
         double r = Math.sqrt(length * length + width * width);
 
@@ -124,7 +124,7 @@ public class SwerveMath {
      * 
      * @param normalizedSpeed   The desired normalized speed, from -1.0 to 1.0.
      * @param angle             The desired angle, from -1.0 to 1.0.
-     * @param encoderPosition   The position of the <i> quadrature </i> turn motor controller.
+     * @param encoderPosition   The position of the <i> quadrature </i> encoder on the turn motor controller.
      * @param gearRatio         The gear ratio of the turn motor controller.
      * @return An array of doubles containing the setpoint values in the order of speed then angle.
      */
@@ -146,13 +146,14 @@ public class SwerveMath {
      * e.g. if the robot was to turn 3&#960/2 radians clockwise, it would be better to turn &#960/2 radians counter-clockwsie.
      * Credit to Team 100 for their code.
      * 
-     * @param angle     The desired angle in radians.
-     * @param encoderPosition   The position of the <i> quadrature </i> turn motor controller.
+     * @param angle             The desired angle between -0.5 and 0.5
+     * @param encoderPosition   The position of the <i> quadrature </i> encoder on the turn motor controller.
      * @param gearRatio        The gear ratio of the turn motor controller.
      * @return A boolean representing whether the robot should reverse or not.
      */
     public static boolean shouldReverse(double angle, double encoderPosition, double gearRatio){
         double convertedEncoder = (encoderPosition / gearRatio) % 1;
+        // Convert the angle from -0.5 to 0.5 to 0 to 1.0
         if (angle < 0) angle += 1;
         
         double longDifference = Math.abs(angle - convertedEncoder);
@@ -166,10 +167,10 @@ public class SwerveMath {
     /**
      * Converts the angle so that the robot can rotate in continuous circles. Credit to Team 100 for their code.
      * 
-     * @param angle     The desired angle in radians.
-     * @param encoderPosition   The position of the <i> quadrature </i> turn motor controller.
+     * @param angle             The desired angle from -1.0 to 1.0
+     * @param encoderPosition   The position of the <i> quadrature </i> encoder on the turn motor controller.
      * @param gearRatio        The gear ratio of the turn motor controller.
-     * @return The converted angle.
+     * @return The converted angle between -0.5 and 0.5.
      */
     public static double convertAngle(double angle, double encoderPosition, double gearRatio) {
         double encPos = encoderPosition / gearRatio;
