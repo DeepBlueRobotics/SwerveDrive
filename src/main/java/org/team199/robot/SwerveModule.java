@@ -17,8 +17,8 @@ public class SwerveModule {
         this.gearRatio = gearRatio;
     }
 
-    public void move(double normalizedSpeed, double angle, double driveModifier, boolean reversed) {
-        double setpoints[] = SwerveMath.computeSetpoints(normalizedSpeed, 
+    public void move(double normalizedSpeed, double angle, double maximumSpeed, double driveModifier, boolean reversed) {
+        double setpoints[] = SwerveMath.computeSetpoints(normalizedSpeed / maximumSpeed,
                                                         angle / (2 * Math.PI),
                                                         this.getQuadraturePosition(),
                                                         gearRatio);

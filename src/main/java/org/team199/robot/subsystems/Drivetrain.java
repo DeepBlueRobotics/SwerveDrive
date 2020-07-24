@@ -228,13 +228,13 @@ FIRST Robotics Competition </a> by Tyler Veness for more information.
     // Drive speeds must be normalized so that they may be passed to motor controllers which require a domain of -1.0 to 1.0 for percentage control.
 
     moduleFL.move(driveSpeeds[0], moduleStates[0].angle.getRadians(), 
-                  Constants.DriveConstants.kDriveModifier, Constants.DriveConstants.reversedFL);
+                  Constants.DriveConstants.maxSpeed, Constants.DriveConstants.kDriveModifier, Constants.DriveConstants.reversedFL);
     moduleFR.move(driveSpeeds[1], moduleStates[1].angle.getRadians(), 
-                  Constants.DriveConstants.kDriveModifier, Constants.DriveConstants.reversedFR);
+                  Constants.DriveConstants.maxSpeed, Constants.DriveConstants.kDriveModifier, Constants.DriveConstants.reversedFR);
     moduleBL.move(driveSpeeds[2], moduleStates[2].angle.getRadians(), 
-                  Constants.DriveConstants.kDriveModifier, Constants.DriveConstants.reversedBL);
+                  Constants.DriveConstants.maxSpeed, Constants.DriveConstants.kDriveModifier, Constants.DriveConstants.reversedBL);
     moduleBR.move(driveSpeeds[3], moduleStates[3].angle.getRadians(), 
-                  Constants.DriveConstants.kDriveModifier, Constants.DriveConstants.reversedBR);
+                  Constants.DriveConstants.maxSpeed, Constants.DriveConstants.kDriveModifier, Constants.DriveConstants.reversedBR);
   }
 
   /**
