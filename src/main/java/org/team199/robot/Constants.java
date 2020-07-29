@@ -8,6 +8,9 @@
 package org.team199.robot;
 
 public final class Constants {
+    // One inch = 0.0254 meters
+    public static double inchToMeter = 0.0254;
+
     public static final class Ports {
         // CAN ids for each of the drive motor controllers.
         public static final int kDriveFrontLeft = 0;
@@ -23,16 +26,17 @@ public final class Constants {
     }
 
     public static final class DriveConstants {
-        public static final double wheelBase = 18.15 / 3.28084;
-        public static final double trackWidth = 17.75 / 3.28084;
+        // Original units are in inches and must be converted to meters.
+        public static final double wheelBase = 18.15 * inchToMeter;
+        public static final double trackWidth = 17.75 * inchToMeter;
 
-        // All of these values should be replaced with more accurate values
+        // The maximum drive speed (in ft/s for a CIM motor) is listed on the AndyMark page for the Swerve and Steer module.
         // maxForward and maxStrafe are in m/s, maxRCW is in radians, and maxSpeed is in m/s.
-        public static final double maxForward = 2.7;
-        public static final double maxStrafe = 2.7;
+        // Speed is the same for maxForward, maxStrafe, and maxSpeed since they are all equal to the max speed for the drive motor 
+        public static final double maxForward = 11.5 * 12 * inchToMeter;
+        public static final double maxStrafe = 11.5 * 12 * inchToMeter;
+        public static final double maxSpeed = 11.5 * 12 * inchToMeter;
         public static final double maxRCW = Math.PI / 2;
-        // ASSUMPTION: Max speed can be calculated by taking assuming no rotation and using max forward and strafe
-        public static final double maxSpeed = Math.sqrt(Math.pow(maxForward, 2) + Math.pow(maxStrafe, 2));
 
         // kP, kI, and kD constants for drive motor controllers in the order of front-left, front-right, back-left, back-right.
         public static final double[] driveKP = {20.0, 20.0, 20.0, 20.0};
