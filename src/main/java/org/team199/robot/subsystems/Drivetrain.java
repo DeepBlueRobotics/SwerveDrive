@@ -225,22 +225,17 @@ FIRST Robotics Competition </a> by Tyler Veness for more information.
                                                 Constants.DriveConstants.wheelBase, Constants.DriveConstants.trackWidth);
       }
     }
-    // Save speeds before they are normalized for odometry purposes.
-    speeds = new double[]{moduleStates[0].speedMetersPerSecond, moduleStates[1].speedMetersPerSecond,
-                          moduleStates[2].speedMetersPerSecond, moduleStates[3].speedMetersPerSecond};
-
     SwerveDriveKinematics.normalizeWheelSpeeds(moduleStates, Constants.DriveConstants.maxSpeed);
-    double[] driveSpeeds = {moduleStates[0].speedMetersPerSecond, moduleStates[1].speedMetersPerSecond,
+    speeds = new double[]{moduleStates[0].speedMetersPerSecond, moduleStates[1].speedMetersPerSecond,
                             moduleStates[2].speedMetersPerSecond, moduleStates[3].speedMetersPerSecond};
-    // Drive speeds must be normalized so that they may be passed to motor controllers which require a domain of -1.0 to 1.0 for percentage control.
 
-    moduleFL.move(driveSpeeds[0], moduleStates[0].angle.getRadians(), 
+    moduleFL.move(speeds[0], moduleStates[0].angle.getRadians(), 
                   Constants.DriveConstants.maxSpeed, Constants.DriveConstants.kDriveModifier, Constants.DriveConstants.reversedFL);
-    moduleFR.move(driveSpeeds[1], moduleStates[1].angle.getRadians(), 
+    moduleFR.move(speeds[1], moduleStates[1].angle.getRadians(), 
                   Constants.DriveConstants.maxSpeed, Constants.DriveConstants.kDriveModifier, Constants.DriveConstants.reversedFR);
-    moduleBL.move(driveSpeeds[2], moduleStates[2].angle.getRadians(), 
+    moduleBL.move(speeds[2], moduleStates[2].angle.getRadians(), 
                   Constants.DriveConstants.maxSpeed, Constants.DriveConstants.kDriveModifier, Constants.DriveConstants.reversedBL);
-    moduleBR.move(driveSpeeds[3], moduleStates[3].angle.getRadians(), 
+    moduleBR.move(speeds[3], moduleStates[3].angle.getRadians(), 
                   Constants.DriveConstants.maxSpeed, Constants.DriveConstants.kDriveModifier, Constants.DriveConstants.reversedBR);
   }
 
