@@ -38,13 +38,13 @@ public class HomeAbsolute extends InstantCommand {
         // Difference is in analog encoder degrees which must be converted to quadrature encoder ticks.
         // Max value of the analog encoder is MAX_ANALOG, min value is 0.
         flQuadPos = (Math.abs(Constants.DriveConstants.FL_GEAR_RATIO) / Constants.DriveConstants.FL_MAX_ANALOG) * 
-                    (drivetrain.moduleFL.getAnalogPosition() - Constants.DriveConstants.FL_TURN_ZERO);
+                    (drivetrain.moduleFL.getAnalogPositionRaw() - Constants.DriveConstants.FL_TURN_ZERO);
         frQuadPos = (Math.abs(Constants.DriveConstants.FR_GEAR_RATIO) / Constants.DriveConstants.FR_MAX_ANALOG) * 
-                    (drivetrain.moduleFR.getAnalogPosition() - Constants.DriveConstants.FR_TURN_ZERO);
+                    (drivetrain.moduleFR.getAnalogPositionRaw() - Constants.DriveConstants.FR_TURN_ZERO);
         blQuadPos = (Math.abs(Constants.DriveConstants.BL_GEAR_RATIO) / Constants.DriveConstants.BL_MAX_ANALOG) * 
-                    (drivetrain.moduleBL.getAnalogPosition() - Constants.DriveConstants.BL_TURN_ZERO);
+                    (drivetrain.moduleBL.getAnalogPositionRaw() - Constants.DriveConstants.BL_TURN_ZERO);
         brQuadPos = (Math.abs(Constants.DriveConstants.BR_GEAR_RATIO) / Constants.DriveConstants.BR_MAX_ANALOG) * 
-                    (drivetrain.moduleBR.getAnalogPosition() - Constants.DriveConstants.BR_TURN_ZERO);
+                    (drivetrain.moduleBR.getAnalogPositionRaw() - Constants.DriveConstants.BR_TURN_ZERO);
         
         drivetrain.moduleFL.setSensorPosition((int) flQuadPos);
         drivetrain.moduleFR.setSensorPosition((int) frQuadPos);

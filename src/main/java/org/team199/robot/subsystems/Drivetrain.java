@@ -183,6 +183,12 @@ FIRST Robotics Competition </a> by Tyler Veness for more information.
     SmartDashboard.putNumber("BL Analog Position", moduleBL.getAnalogPosition());
     SmartDashboard.putNumber("BR Analog Position", moduleBR.getAnalogPosition());
 
+    // Display the position of the raw analog encoder.
+    SmartDashboard.putNumber("FL Raw Analog Position", moduleFL.getAnalogPositionRaw());
+    SmartDashboard.putNumber("FR Raw Analog Position", moduleFR.getAnalogPositionRaw());
+    SmartDashboard.putNumber("BL Raw Analog Position", moduleBL.getAnalogPositionRaw());
+    SmartDashboard.putNumber("BR Raw Analog Position", moduleBR.getAnalogPositionRaw());
+
     // Display the module angle as calculated using the absolute encoder.
     SmartDashboard.putNumber("FL Module Angle", moduleFL.getModuleAngle((int) Constants.DriveConstants.FL_TURN_ZERO, Constants.DriveConstants.FL_MAX_ANALOG));
     SmartDashboard.putNumber("FR Module Angle", moduleFR.getModuleAngle((int) Constants.DriveConstants.FR_TURN_ZERO, Constants.DriveConstants.FR_MAX_ANALOG));
@@ -213,6 +219,7 @@ FIRST Robotics Competition </a> by Tyler Veness for more information.
    * @param rotation  Desired rotation speed (in rad/s).
    */
   public void drive(double forward, double strafe, double rotation) {
+    System.out.println(forward + ", " + strafe + ", " + rotation);
     SwerveModuleState[] moduleStates;
     if (implementation == SwerveImplementation.WPILib) {
       moduleStates = getSwerveStates(forward, strafe, rotation);

@@ -13,7 +13,11 @@ public class SwerveModule {
 
     public SwerveModule(WPI_TalonSRX drive, WPI_TalonSRX turn, double gearRatio) {
         this.drive = drive;
+        this.drive.setSensorPhase(true);
+        this.drive.configAllowableClosedloopError(0, 4);
         this.turn = turn;
+        this.turn.setSensorPhase(true);
+        this.turn.configAllowableClosedloopError(0, 4);
         this.gearRatio = gearRatio;
     }
 
@@ -23,7 +27,7 @@ public class SwerveModule {
                                                          getQuadraturePosition(),
                                                          gearRatio);
         setSpeed(setpoints[0], driveModifier);
-        setAngle(setpoints[1], reversed);
+        if(setpoints[0] != 0.0) setAngle(setpoints[1], reversed);
     }
 
     public void setSpeed(double speed, double driveModifier) {
@@ -66,6 +70,12 @@ public class SwerveModule {
     public int getAnalogPosition() { return turn.getSensorCollection().getAnalogIn(); }
 
     /** 
+     * Returns the position of the analog encoder for a turn motor controller.
+     * @return The raw position of the analog encoder.
+     */
+    public int getAnalogPositionRaw() { return turn.getSensorCollection().getAnalogInRaw(); }
+
+    /** 
      * Returns the angle of the analog encoder for a turn motor controller.
      * @return The angle, in radians, of the swerve module.
     */
@@ -74,7 +84,7 @@ public class SwerveModule {
         // Therefore zero degrees is located at (TURN_ZERO - MAX_ANALOG / 4) mod MAX_ANALOG (call this reference) since TURN_ZERO points to straight forward (90 degrees)
         // MAX_ANALOG analog = 2 * pi radians so analog to radian is (2 * pi / MAX_ANALOG)(Current analog - reference)
         int reference = (int) (TURN_ZERO - (MAX_ANALOG / 4)) % MAX_ANALOG;
-        double angle = ((Math.PI * 2) / MAX_ANALOG) * (getAnalogPosition() - reference);
+        double angle = ((Math.PI * 2) / MAX_ANALOG) * (getAnalogPositionRaw() - reference);
         if (angle < 0) return 2 * Math.PI + angle;
         else return angle;
     }

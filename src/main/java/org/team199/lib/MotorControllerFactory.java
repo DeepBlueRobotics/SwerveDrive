@@ -28,6 +28,7 @@ public class MotorControllerFactory {
    */
   public static WPI_VictorSPX createVictor(int port) {
     WPI_VictorSPX victor = new WPI_VictorSPX(port);
+    victor.configFactoryDefault();
 
     // Put all configurations for the victor motor controllers in here.
     victor.configNominalOutputForward(0, 10);
@@ -48,6 +49,7 @@ public class MotorControllerFactory {
    */
   public static WPI_TalonSRX createTalon(int id) {
     WPI_TalonSRX talon = new WPI_TalonSRX(id);
+    talon.configFactoryDefault();
 
     // Put all configurations for the talon motor controllers in here.
     // All values are from last year's code.

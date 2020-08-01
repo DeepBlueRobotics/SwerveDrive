@@ -56,10 +56,10 @@ public final class Constants {
         public static final double kDriveModifier = 0.6;
 
         // Whether or not steering should be reversed
-        public static final boolean reversedFL = true;
-        public static final boolean reversedFR = true;
-        public static final boolean reversedBL = true;
-        public static final boolean reversedBR = true;
+        public static final boolean reversedFL = false;
+        public static final boolean reversedFR = false;
+        public static final boolean reversedBL = false;
+        public static final boolean reversedBR = false;
 
         // All of the gearboxes are PG71. PG71 have a gearbox reduction of 71
         // PG71 drives 48 teeth gear which drives 40 teeth gear.
