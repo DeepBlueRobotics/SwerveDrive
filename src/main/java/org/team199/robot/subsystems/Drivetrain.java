@@ -270,7 +270,7 @@ FIRST Robotics Competition </a> by Tyler Veness for more information.
    * @param forward     The desired forward speed, in m/s.
    * @param strafe      The desired strafe speed, in m/s.
    * @param rotation    The desired rotation speed, in rad/s.
-   * @return A ChassisSpeeds object.
+   * @return A SwerveModuleState array, one for each side of the drivetrain (FL, FR, etc.).
   */
   private SwerveModuleState[] getSwerveStates(double forward, double strafe, double rotation) {
     return kinematics.toSwerveModuleStates(getChassisSpeeds(forward, strafe, rotation));

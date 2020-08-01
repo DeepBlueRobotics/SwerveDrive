@@ -105,9 +105,20 @@ public final class Constants {
         public static final class Manipulator {        
             public static final int kPort = 2;
 
+            public static final int X = 1;
+            public static final int A = 2;
+            public static final int B = 3;
+            public static final int Y = 4;
+            public static final int LB = 5;
+            public static final int RB = 6;
+            public static final int LT = 7;
+            public static final int RT = 8;
+            public static final int BACK = 9;
+            public static final int START = 10;
+
             // Joystick buttons
-            public static final int fieldOrientedToggle = 2;
-            public static final int homeAbsolute = 3;
+            public static final int fieldOrientedToggle = A;
+            public static final int homeAbsolute = B;
         }
     }
 }

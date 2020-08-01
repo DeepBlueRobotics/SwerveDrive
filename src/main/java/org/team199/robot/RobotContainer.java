@@ -31,30 +31,28 @@ public class RobotContainer {
         leftJoy = new Joystick(Constants.OI.LeftJoy.kPort);
         rightJoy = new Joystick(Constants.OI.RightJoy.kPort);
 
-        if (DriverStation.getInstance().getJoystickName(0).length() != 0) {
+        if (DriverStation.getInstance().getJoystickName(Constants.OI.LeftJoy.kPort).length() != 0) {
           configureButtonBindingsLeftJoy();
+
+          if (DriverStation.getInstance().getJoystickName(Constants.OI.RightJoy.kPort).length() != 0) {
+            configureButtonBindingsRightJoy();
+            drivetrain.setDefaultCommand(new Drive(drivetrain, leftJoy, rightJoy));
+          } else {
+            System.err.println("ERROR: Right Joystick missing. Perhaps it was not plugged in correctly?");
+          }
         } else {
           System.err.println("ERROR: Left Joystick missing. Perhaps it was not plugged in correctly?");
         }
-    
-        if (DriverStation.getInstance().getJoystickName(1).length() != 0) {
-          configureButtonBindingsRightJoy();
-        } else {
-          System.err.println("ERROR: Right Joystick missing. Perhaps it was not plugged in correctly?");
-        }
-
-        drivetrain.setDefaultCommand(new Drive(drivetrain, leftJoy, rightJoy));
         break;
       case GAMEPAD:
         gamepad = new Joystick(Constants.OI.Manipulator.kPort);
 
-        if (DriverStation.getInstance().getJoystickName(2).length() != 0) {
+        if (DriverStation.getInstance().getJoystickName(Constants.OI.Manipulator.kPort).length() != 0) {
           configureButtonBindingsGamepad();
+          drivetrain.setDefaultCommand(new Drive(drivetrain, gamepad));
         } else {
           System.err.println("ERROR: Manipulator missing. Perhaps it was not plugged in correctly?");
         }
-
-        drivetrain.setDefaultCommand(new Drive(drivetrain, gamepad));
         break;
       }
   }
