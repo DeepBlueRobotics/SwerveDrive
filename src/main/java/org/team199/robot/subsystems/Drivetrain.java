@@ -163,6 +163,10 @@ FIRST Robotics Competition </a> by Tyler Veness for more information.
    * Updates SmartDashboard with information about the drivetrain pertinent to the operator.
   */
   public void updateSmartDashboard() {
+    SmartDashboard.putNumber("FL Target Angle", moduleFL.targetAngle);
+    SmartDashboard.putNumber("FR Target Angle", moduleFR.targetAngle);
+    SmartDashboard.putNumber("BL Target Angle", moduleBL.targetAngle);
+    SmartDashboard.putNumber("BR Target Angle", moduleBR.targetAngle);
     // Display the status of the odometry.
     SmartDashboard.putNumber("Pose X", (implementation == SwerveImplementation.WPILib) ? 
       odometry.getPoseMeters().getTranslation().getX() : pose.getTranslation().getX());
@@ -235,15 +239,11 @@ FIRST Robotics Competition </a> by Tyler Veness for more information.
     SwerveDriveKinematics.normalizeWheelSpeeds(moduleStates, Constants.DriveConstants.maxSpeed);
     speeds = new double[]{moduleStates[0].speedMetersPerSecond, moduleStates[1].speedMetersPerSecond,
                             moduleStates[2].speedMetersPerSecond, moduleStates[3].speedMetersPerSecond};
-
-    moduleFL.move(speeds[0], moduleStates[0].angle.getRadians(), 
-                  Constants.DriveConstants.maxSpeed, Constants.DriveConstants.kDriveModifier, Constants.DriveConstants.reversedFL);
-    moduleFR.move(speeds[1], moduleStates[1].angle.getRadians(), 
-                  Constants.DriveConstants.maxSpeed, Constants.DriveConstants.kDriveModifier, Constants.DriveConstants.reversedFR);
-    moduleBL.move(speeds[2], moduleStates[2].angle.getRadians(), 
-                  Constants.DriveConstants.maxSpeed, Constants.DriveConstants.kDriveModifier, Constants.DriveConstants.reversedBL);
-    moduleBR.move(speeds[3], moduleStates[3].angle.getRadians(), 
-                  Constants.DriveConstants.maxSpeed, Constants.DriveConstants.kDriveModifier, Constants.DriveConstants.reversedBR);
+    System.out.println(moduleStates[0].angle.getRadians());
+    moduleFL.move(speeds[0], moduleStates[0].angle.getRadians(), Constants.DriveConstants.kDriveModifier, Constants.DriveConstants.reversedFL);
+    moduleFR.move(speeds[1], moduleStates[1].angle.getRadians(), Constants.DriveConstants.kDriveModifier, Constants.DriveConstants.reversedFR);
+    moduleBL.move(speeds[2], moduleStates[2].angle.getRadians(), Constants.DriveConstants.kDriveModifier, Constants.DriveConstants.reversedBL);
+    moduleBR.move(speeds[3], moduleStates[3].angle.getRadians(), Constants.DriveConstants.kDriveModifier, Constants.DriveConstants.reversedBR);
   }
 
   /**

@@ -10,6 +10,7 @@ public class SwerveModule {
     private WPI_TalonSRX drive;
     private WPI_TalonSRX turn;
     private double gearRatio;
+    public double targetAngle;
 
     public SwerveModule(WPI_TalonSRX drive, WPI_TalonSRX turn, double gearRatio) {
         this.drive = drive;
@@ -21,11 +22,12 @@ public class SwerveModule {
         this.gearRatio = gearRatio;
     }
 
-    public void move(double normalizedSpeed, double angle, double maximumSpeed, double driveModifier, boolean reversed) {
-        double setpoints[] = SwerveMath.computeSetpoints(normalizedSpeed / maximumSpeed,
+    public void move(double normalizedSpeed, double angle, double driveModifier, boolean reversed) {
+        double setpoints[] = SwerveMath.computeSetpoints(normalizedSpeed,
                                                          angle / (2 * Math.PI),
                                                          getQuadraturePosition(),
                                                          gearRatio);
+        System.out.println("Move Values: " + setpoints[0] + ", " + setpoints[1]);
         setSpeed(setpoints[0], driveModifier);
         if(setpoints[0] != 0.0) setAngle(setpoints[1], reversed);
     }
@@ -36,7 +38,8 @@ public class SwerveModule {
 
     // angle must be between -0.5 and 0.5
     public void setAngle(double angle, boolean reversed) {
-        turn.set(ControlMode.Position, (reversed ? -1 : 1) * angle * gearRatio);
+        targetAngle = (reversed ? -1 : 1) * angle * gearRatio;
+        turn.set(ControlMode.Position, targetAngle);
     }
 
     public void setDrivePID(double kP, double kI, double kD) {

@@ -130,6 +130,7 @@ public class SwerveMath {
      */
     public static double[] computeSetpoints(double normalizedSpeed, double angle, double encoderPosition, double gearRatio) {
         double newAngle = convertAngle(angle, encoderPosition, gearRatio);
+        System.out.println(newAngle);
         double speed = normalizedSpeed;
 		
 		if (shouldReverse(newAngle, encoderPosition, gearRatio)) {

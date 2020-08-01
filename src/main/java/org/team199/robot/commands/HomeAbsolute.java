@@ -6,6 +6,7 @@ import org.team199.robot.Constants;
 import org.team199.robot.subsystems.Drivetrain;
 
 import edu.wpi.first.wpilibj.command.InstantCommand;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 
 /**
@@ -27,6 +28,8 @@ public class HomeAbsolute extends InstantCommand {
     // Called just before this Command runs the first time
     @Override
     protected void initialize() {
+        System.out.println("Home of the abs.");
+        SmartDashboard.putNumber("ABSOLUTE count", SmartDashboard.getNumber("ABSOLUTE count", 0) + 1);
         // The quadrature encoders are for turning the steer motor.
         // The analog encoders are for checking if the motors are in the right position.
         drivetrain.moduleFL.changeSelectedSensor(FeedbackDevice.QuadEncoder);

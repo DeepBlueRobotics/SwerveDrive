@@ -89,7 +89,7 @@ public final class Constants {
         public enum ControlType {JOYSTICKS, GAMEPAD};
 
         public static ControlType CONTROL_TYPE = ControlType.GAMEPAD;
-        public static final double LEFT_Y_THRESHOLD = 0.008;
+        public static final double JOY_THRESH = 0.01;
         public static final class LeftJoy {
             public static final int kPort = 0;
 

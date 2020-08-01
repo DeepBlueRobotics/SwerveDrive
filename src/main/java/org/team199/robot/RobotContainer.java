@@ -76,10 +76,15 @@ public class RobotContainer {
     homeAbsolute = new JoystickButton(gamepad, Constants.OI.Manipulator.homeAbsolute);
     homeAbsolute.whenPressed(new HomeAbsolute(drivetrain));
 
+    System.out.println("Buttons be ok.");
+
     // Toggle whether or not we are in field oriented mode.
     new JoystickButton(gamepad, Constants.OI.Manipulator.fieldOrientedToggle).whenPressed(new InstantCommand(() -> {
       SmartDashboard.putBoolean("Field Oriented", !SmartDashboard.getBoolean("Field Oriented", true));
     }));
   }
 
+  /*public void homeAbsolutePressed() {
+    System.out.println(gamepad.getRawButtonPressed(Constants.OI.Manipulator.homeAbsolute));
+  }*/
 }
