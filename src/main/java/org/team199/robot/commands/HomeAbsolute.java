@@ -5,7 +5,7 @@ import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import org.team199.robot.Constants;
 import org.team199.robot.subsystems.Drivetrain;
 
-import edu.wpi.first.wpilibj.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 
@@ -22,12 +22,11 @@ public class HomeAbsolute extends InstantCommand {
   
     public HomeAbsolute(Drivetrain drivetrain) {
         this.drivetrain = drivetrain;
-        setRunWhenDisabled(true);
     }
   
     // Called just before this Command runs the first time
     @Override
-    protected void initialize() {
+    public void initialize() {
         System.out.println("Home of the abs.");
         SmartDashboard.putNumber("ABSOLUTE count", SmartDashboard.getNumber("ABSOLUTE count", 0) + 1);
         // The quadrature encoders are for turning the steer motor.
@@ -58,6 +57,11 @@ public class HomeAbsolute extends InstantCommand {
         drivetrain.moduleFR.setAngle(0.0, false);
         drivetrain.moduleBL.setAngle(0.0, false);
         drivetrain.moduleBR.setAngle(0.0, false);
+    }
+
+    @Override
+    public boolean runsWhenDisabled(){
+        return true;
     }
   }
   
