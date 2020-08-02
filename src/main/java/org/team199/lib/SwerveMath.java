@@ -2,6 +2,7 @@ package org.team199.lib;
 
 import edu.wpi.first.wpilibj.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.kinematics.SwerveModuleState;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
  * Class for SwerveMath - Team 199's custom implementation of methods for calculating the 
@@ -130,14 +131,27 @@ public class SwerveMath {
      */
     public static double[] computeSetpoints(double normalizedSpeed, double angle, double encoderPosition, double gearRatio) {
         double newAngle = convertAngle(angle, encoderPosition, gearRatio);
-        System.out.println(newAngle);
+        SmartDashboard.putNumber("New Angle 1", newAngle);
         double speed = normalizedSpeed;
 		
 		if (shouldReverse(newAngle, encoderPosition, gearRatio)) {
 			if (newAngle < 0) newAngle += 0.5;
 			else newAngle -= 0.5;
 			speed *= -1.0;
-		}
+        }
+
+        /*double currentAngle = (encoderPosition / gearRatio) % 1;
+        SmartDashboard.putNumber("currentAngle", currentAngle);
+        double relativeAngle = newAngle - currentAngle;
+        SmartDashboard.putNumber("relativeAngle", relativeAngle);
+        
+        if(Math.abs(relativeAngle) > 0.25){
+            newAngle = relativeAngle - relativeAngle/Math.abs(relativeAngle) * 0.5 + currentAngle;
+            speed *= -1.0;
+        }*/
+        
+
+        SmartDashboard.putNumber("New Angle 2", newAngle);
 		
 		return new double[]{speed, newAngle};
     }
