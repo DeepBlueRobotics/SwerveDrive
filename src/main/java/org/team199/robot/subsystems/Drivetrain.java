@@ -99,10 +99,11 @@ public class Drivetrain extends SubsystemBase {
     // Decide whether or not to use custom implementation of swerve drive or use WPILib implementation using Odometry/Kinematics.
     if (implementation == SwerveImplementation.WPILib) {
       // Define the corners of the robot relative to the center of the robot using Translation2d objects.
-      Translation2d locationFL = new Translation2d(-Constants.DriveConstants.trackWidth / 2, Constants.DriveConstants.wheelBase / 2);
-      Translation2d locationFR = new Translation2d(Constants.DriveConstants.trackWidth / 2, Constants.DriveConstants.wheelBase / 2);
-      Translation2d locationBL = new Translation2d(-Constants.DriveConstants.trackWidth, -Constants.DriveConstants.wheelBase / 2);
-      Translation2d locationBR = new Translation2d(Constants.DriveConstants.trackWidth / 2, -Constants.DriveConstants.wheelBase / 2);
+      // Positive x-values represent moving toward the front of the robot whereas positive y-values represent moving toward the left of the robot.
+      Translation2d locationFL = new Translation2d(Constants.DriveConstants.wheelBase / 2, Constants.DriveConstants.trackWidth / 2);
+      Translation2d locationFR = new Translation2d(Constants.DriveConstants.wheelBase / 2, -Constants.DriveConstants.trackWidth / 2);
+      Translation2d locationBL = new Translation2d(-Constants.DriveConstants.wheelBase / 2, Constants.DriveConstants.trackWidth / 2);
+      Translation2d locationBR = new Translation2d(-Constants.DriveConstants.wheelBase / 2, -Constants.DriveConstants.trackWidth / 2);
 
       kinematics = new SwerveDriveKinematics(locationFL, locationFR, locationBL, locationBR);
       odometry = new SwerveDriveOdometry(kinematics, new Rotation2d(heading));
