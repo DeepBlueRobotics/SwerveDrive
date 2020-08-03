@@ -241,10 +241,11 @@ FIRST Robotics Competition </a> by Tyler Veness for more information.
     speeds = new double[]{moduleStates[0].speedMetersPerSecond, moduleStates[1].speedMetersPerSecond,
                             moduleStates[2].speedMetersPerSecond, moduleStates[3].speedMetersPerSecond};
     SmartDashboard.putNumber("BL Swerve State Angle", moduleStates[2].angle.getRadians());
-    //moduleFL.move(speeds[0], moduleStates[0].angle.getRadians(), Constants.DriveConstants.maxSpeed, -Constants.DriveConstants.kDriveModifier, Constants.DriveConstants.reversedFL);
-    //moduleFR.move(speeds[1], moduleStates[1].angle.getRadians(), Constants.DriveConstants.maxSpeed, Constants.DriveConstants.kDriveModifier, Constants.DriveConstants.reversedFR);
+    SmartDashboard.putNumber("BL Selected Sensor Position", moduleBL.getSensorPosition());
+    moduleFL.move(speeds[0], moduleStates[0].angle.getRadians(), Constants.DriveConstants.maxSpeed, -Constants.DriveConstants.kDriveModifier, Constants.DriveConstants.reversedFL);
+    moduleFR.move(speeds[1], moduleStates[1].angle.getRadians(), Constants.DriveConstants.maxSpeed, Constants.DriveConstants.kDriveModifier, Constants.DriveConstants.reversedFR);
     moduleBL.move(speeds[2], moduleStates[2].angle.getRadians(), Constants.DriveConstants.maxSpeed, -Constants.DriveConstants.kDriveModifier, Constants.DriveConstants.reversedBL);
-    //moduleBR.move(speeds[3], moduleStates[3].angle.getRadians(), Constants.DriveConstants.maxSpeed, Constants.DriveConstants.kDriveModifier, Constants.DriveConstants.reversedBR);
+    moduleBR.move(speeds[3], moduleStates[3].angle.getRadians(), Constants.DriveConstants.maxSpeed, Constants.DriveConstants.kDriveModifier, Constants.DriveConstants.reversedBR);
   }
 
   /**

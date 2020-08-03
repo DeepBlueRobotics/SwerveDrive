@@ -20,12 +20,13 @@ public class SwerveModule {
         this.turn.setSensorPhase(true);
         this.turn.configAllowableClosedloopError(0, 4);
         this.gearRatio = gearRatio;
+        changeSelectedSensor(FeedbackDevice.QuadEncoder);
     }
 
     public void move(double normalizedSpeed, double angle, double maxSpeed, double driveModifier, boolean reversed) {
         double setpoints[] = SwerveMath.computeSetpoints(normalizedSpeed / maxSpeed,
-                                                         angle / (2 * Math.PI),
-                                                         getQuadraturePosition(),
+                                                         -angle / (2 * Math.PI),
+                                                         getSensorPosition(),
                                                          gearRatio);
         System.out.println("Move Values: " + setpoints[0] + ", " + setpoints[1]);
         setSpeed(setpoints[0], driveModifier);
@@ -90,6 +91,10 @@ public class SwerveModule {
         double angle = ((Math.PI * 2) / MAX_ANALOG) * (getAnalogPositionRaw() - reference);
         if (angle < 0) return 2 * Math.PI + angle;
         else return angle;
+    }
+
+    public int getSensorPosition(){
+        return turn.getSelectedSensorPosition(0);
     }
 
     public void setSensorPosition(int pos) { turn.setSelectedSensorPosition(pos); }

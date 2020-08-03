@@ -140,17 +140,6 @@ public class SwerveMath {
 			speed *= -1.0;
         }
 
-        /*double currentAngle = (encoderPosition / gearRatio) % 1;
-        SmartDashboard.putNumber("currentAngle", currentAngle);
-        double relativeAngle = newAngle - currentAngle;
-        SmartDashboard.putNumber("relativeAngle", relativeAngle);
-        
-        if(Math.abs(relativeAngle) > 0.25){
-            newAngle = relativeAngle - relativeAngle/Math.abs(relativeAngle) * 0.5 + currentAngle;
-            speed *= -1.0;
-        }*/
-        
-
         SmartDashboard.putNumber("New Angle 2", newAngle);
 		
 		return new double[]{speed, newAngle};
@@ -168,6 +157,7 @@ public class SwerveMath {
      */
     public static boolean shouldReverse(double angle, double encoderPosition, double gearRatio){
         double convertedEncoder = (encoderPosition / gearRatio) % 1;
+        System.out.println("corrank angleee: " + convertedEncoder);
         // Convert the angle from -0.5 to 0.5 to 0 to 1.0
         if (angle < 0) angle += 1;
         
