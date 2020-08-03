@@ -29,6 +29,8 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 /**
  * The Drivetrain subsystem. 
  * Contains the majority of methods associated with driving the robot or updating the position of the robot.
+ * NOTE: Make sure to run the HomeAbsolute command before you start driving, as some methods rely on the assumption that
+ * 0 on the quadrature encoder = straight forward (the Drive() command will not function correctly if you do not call HomeAbsolute).
  */
 public class Drivetrain extends SubsystemBase {
   /** Controls which codebase to upon deploy:
@@ -120,15 +122,10 @@ public class Drivetrain extends SubsystemBase {
 FIRST Robotics Competition </a> by Tyler Veness for more information.
    */
   public void updateOdometry() {
-    // There are no encoders on the drive motor controllers so assume current speed = desired speed
-    SwerveModuleState flState = new SwerveModuleState(speeds[0], 
-                                                      new Rotation2d(moduleFL.getModuleAngle((int) Constants.DriveConstants.FL_TURN_ZERO, Constants.DriveConstants.FL_MAX_ANALOG)));
-    SwerveModuleState frState = new SwerveModuleState(speeds[1], 
-                                                      new Rotation2d(moduleFR.getModuleAngle((int) Constants.DriveConstants.FR_TURN_ZERO, Constants.DriveConstants.FR_MAX_ANALOG)));
-    SwerveModuleState blState = new SwerveModuleState(speeds[2], 
-                                                      new Rotation2d(moduleBL.getModuleAngle((int) Constants.DriveConstants.BL_TURN_ZERO, Constants.DriveConstants.BL_MAX_ANALOG)));
-    SwerveModuleState brState = new SwerveModuleState(speeds[3], 
-                                                      new Rotation2d(moduleBR.getModuleAngle((int) Constants.DriveConstants.BR_TURN_ZERO, Constants.DriveConstants.BR_MAX_ANALOG)));
+    SwerveModuleState flState = moduleFL.getCurrentState();
+    SwerveModuleState frState = moduleFR.getCurrentState();
+    SwerveModuleState blState = moduleBL.getCurrentState();
+    SwerveModuleState brState = moduleBR.getCurrentState();
 
     if (implementation == SwerveImplementation.WPILib) {
       odometry.update(Rotation2d.fromDegrees(getHeading()), flState, frState, blState, brState);
@@ -195,10 +192,10 @@ FIRST Robotics Competition </a> by Tyler Veness for more information.
     SmartDashboard.putNumber("BR Raw Analog Position", moduleBR.getAnalogPositionRaw());
 
     // Display the module angle as calculated using the absolute encoder.
-    SmartDashboard.putNumber("FL Module Angle", moduleFL.getModuleAngle((int) Constants.DriveConstants.FL_TURN_ZERO, Constants.DriveConstants.FL_MAX_ANALOG));
-    SmartDashboard.putNumber("FR Module Angle", moduleFR.getModuleAngle((int) Constants.DriveConstants.FR_TURN_ZERO, Constants.DriveConstants.FR_MAX_ANALOG));
-    SmartDashboard.putNumber("BL Module Angle", moduleBL.getModuleAngle((int) Constants.DriveConstants.BL_TURN_ZERO, Constants.DriveConstants.BL_MAX_ANALOG));
-    SmartDashboard.putNumber("BR Module Angle", moduleBR.getModuleAngle((int) Constants.DriveConstants.BR_TURN_ZERO, Constants.DriveConstants.BR_MAX_ANALOG));
+    SmartDashboard.putNumber("FL Module Angle", moduleFL.getModuleAngle(Constants.DriveConstants.FL_GEAR_RATIO));
+    SmartDashboard.putNumber("FR Module Angle", moduleFR.getModuleAngle(Constants.DriveConstants.FR_GEAR_RATIO));
+    SmartDashboard.putNumber("BL Module Angle", moduleBL.getModuleAngle(Constants.DriveConstants.BL_GEAR_RATIO));
+    SmartDashboard.putNumber("BR Module Angle", moduleBR.getModuleAngle(Constants.DriveConstants.BR_GEAR_RATIO));
   }
 
   @Override
@@ -237,6 +234,7 @@ FIRST Robotics Competition </a> by Tyler Veness for more information.
                                                 Constants.DriveConstants.wheelBase, Constants.DriveConstants.trackWidth);
       }
     }
+
     SwerveDriveKinematics.normalizeWheelSpeeds(moduleStates, Constants.DriveConstants.maxSpeed);
     speeds = new double[]{moduleStates[0].speedMetersPerSecond, moduleStates[1].speedMetersPerSecond,
                             moduleStates[2].speedMetersPerSecond, moduleStates[3].speedMetersPerSecond};

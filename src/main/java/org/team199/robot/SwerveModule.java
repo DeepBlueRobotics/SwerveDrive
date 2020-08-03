@@ -6,11 +6,15 @@ import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 
 import org.team199.lib.SwerveMath;
 
+import edu.wpi.first.wpilibj.geometry.Rotation2d;
+import edu.wpi.first.wpilibj.kinematics.SwerveModuleState;
+
 public class SwerveModule {
     private WPI_TalonSRX drive;
     private WPI_TalonSRX turn;
     private double gearRatio;
     public double targetAngle;
+    private double expectedSpeed;
 
     public SwerveModule(WPI_TalonSRX drive, WPI_TalonSRX turn, double gearRatio) {
         this.drive = drive;
@@ -20,6 +24,7 @@ public class SwerveModule {
         this.turn.setSensorPhase(true);
         this.turn.configAllowableClosedloopError(0, 4);
         this.gearRatio = gearRatio;
+        expectedSpeed = 0.0;
         changeSelectedSensor(FeedbackDevice.QuadEncoder);
     }
 
@@ -30,6 +35,8 @@ public class SwerveModule {
                                                          gearRatio);
         System.out.println("Move Values: " + setpoints[0] + ", " + setpoints[1]);
         setSpeed(setpoints[0], driveModifier);
+        // There are no encoders on the drive motor controllers so assume current speed = expected speed
+        expectedSpeed = maxSpeed * setpoints[0];
         if(setpoints[0] != 0.0) setAngle(setpoints[1], reversed);
     }
 
@@ -83,14 +90,8 @@ public class SwerveModule {
      * Returns the angle of the analog encoder for a turn motor controller.
      * @return The angle, in radians, of the swerve module.
     */
-    public double getModuleAngle(int TURN_ZERO, int MAX_ANALOG) {
-        // One full revolution is MAX_ANALOG on the analog encoder, so a quarter revolution is (MAX_ANALOG / 4).
-        // Therefore zero degrees is located at (TURN_ZERO - MAX_ANALOG / 4) mod MAX_ANALOG (call this reference) since TURN_ZERO points to straight forward (90 degrees)
-        // MAX_ANALOG analog = 2 * pi radians so analog to radian is (2 * pi / MAX_ANALOG)(Current analog - reference)
-        int reference = (int) (TURN_ZERO - (MAX_ANALOG / 4)) % MAX_ANALOG;
-        double angle = ((Math.PI * 2) / MAX_ANALOG) * (getAnalogPositionRaw() - reference);
-        if (angle < 0) return 2 * Math.PI + angle;
-        else return angle;
+    public double getModuleAngle(double gearRatio) {
+        return 2 * Math.PI * (getSensorPosition() / gearRatio) % 1;
     }
 
     public int getSensorPosition(){
@@ -100,4 +101,8 @@ public class SwerveModule {
     public void setSensorPosition(int pos) { turn.setSelectedSensorPosition(pos); }
 
     public void changeSelectedSensor(FeedbackDevice sensor) { turn.configSelectedFeedbackSensor(sensor); }
+
+    public SwerveModuleState getCurrentState() {
+        return new SwerveModuleState(expectedSpeed, new Rotation2d(getModuleAngle(gearRatio)));
+    }
 }
