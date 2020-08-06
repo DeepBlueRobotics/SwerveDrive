@@ -56,8 +56,6 @@ public class Drivetrain extends SubsystemBase {
   public SwerveModule moduleBL;
   public SwerveModule moduleBR;
 
-  private double speeds[] = {0.0, 0.0, 0.0, 0.0};
-
   // Odometry equivalent for non-WPILib implementation
   public Pose2d pose;
   private double gyroOffset;
@@ -73,16 +71,20 @@ public class Drivetrain extends SubsystemBase {
     double heading = Math.toRadians(getHeading());
 
     // Initialize SwerveModules
-    moduleFL = new SwerveModule(MotorControllerFactory.createTalon(Constants.Ports.kDriveFrontLeft), 
+    moduleFL = new SwerveModule(SwerveModule.ModuleType.FL,
+                                MotorControllerFactory.createTalon(Constants.Ports.kDriveFrontLeft), 
                                 MotorControllerFactory.createTalon(Constants.Ports.kTurnFrontLeft), 
                                 Constants.DriveConstants.FL_GEAR_RATIO);
-    moduleFR = new SwerveModule(MotorControllerFactory.createTalon(Constants.Ports.kDriveFrontRight), 
+    moduleFR = new SwerveModule(SwerveModule.ModuleType.FR,
+                                MotorControllerFactory.createTalon(Constants.Ports.kDriveFrontRight), 
                                 MotorControllerFactory.createTalon(Constants.Ports.kTurnFrontRight), 
                                 Constants.DriveConstants.FR_GEAR_RATIO);
-    moduleBL = new SwerveModule(MotorControllerFactory.createTalon(Constants.Ports.kDriveBackLeft), 
+    moduleBL = new SwerveModule(SwerveModule.ModuleType.BL,
+                                MotorControllerFactory.createTalon(Constants.Ports.kDriveBackLeft), 
                                 MotorControllerFactory.createTalon(Constants.Ports.kTurnBackLeft), 
                                 Constants.DriveConstants.BL_GEAR_RATIO);
-    moduleBR = new SwerveModule(MotorControllerFactory.createTalon(Constants.Ports.kDriveBackRight), 
+    moduleBR = new SwerveModule(SwerveModule.ModuleType.BR,
+                                MotorControllerFactory.createTalon(Constants.Ports.kDriveBackRight), 
                                 MotorControllerFactory.createTalon(Constants.Ports.kTurnBackRight), 
                                 Constants.DriveConstants.BR_GEAR_RATIO);
 
@@ -161,10 +163,6 @@ FIRST Robotics Competition </a> by Tyler Veness for more information.
    * Updates SmartDashboard with information about the drivetrain pertinent to the operator.
   */
   public void updateSmartDashboard() {
-    SmartDashboard.putNumber("FL Target Angle", moduleFL.targetAngle);
-    SmartDashboard.putNumber("FR Target Angle", moduleFR.targetAngle);
-    SmartDashboard.putNumber("BL Target Angle", moduleBL.targetAngle);
-    SmartDashboard.putNumber("BR Target Angle", moduleBR.targetAngle);
     // Display the status of the odometry.
     SmartDashboard.putNumber("Pose X", (implementation == SwerveImplementation.WPILib) ? 
       odometry.getPoseMeters().getTranslation().getX() : pose.getTranslation().getX());
@@ -172,31 +170,12 @@ FIRST Robotics Competition </a> by Tyler Veness for more information.
       odometry.getPoseMeters().getTranslation().getY() : pose.getTranslation().getY());
     SmartDashboard.putNumber("Pose Rotation (Radians)", (implementation == SwerveImplementation.WPILib) ? 
       odometry.getPoseMeters().getRotation().getRadians() : pose.getRotation().getRadians());
-    
-    // Display the position of the quadrature encoder.
-    SmartDashboard.putNumber("FL Quadrature Position", moduleFL.getQuadraturePosition());
-    SmartDashboard.putNumber("FR Quadrature Position", moduleFR.getQuadraturePosition());
-    SmartDashboard.putNumber("BL Quadrature Position", moduleBL.getQuadraturePosition());
-    SmartDashboard.putNumber("BR Quadrature Position", moduleBR.getQuadraturePosition());
 
-    // Display the position of the analog encoder.
-    SmartDashboard.putNumber("FL Analog Position", moduleFL.getAnalogPosition());
-    SmartDashboard.putNumber("FR Analog Position", moduleFR.getAnalogPosition());
-    SmartDashboard.putNumber("BL Analog Position", moduleBL.getAnalogPosition());
-    SmartDashboard.putNumber("BR Analog Position", moduleBR.getAnalogPosition());
-
-    // Display the position of the raw analog encoder.
-    SmartDashboard.putNumber("FL Raw Analog Position", moduleFL.getAnalogPositionRaw());
-    SmartDashboard.putNumber("FR Raw Analog Position", moduleFR.getAnalogPositionRaw());
-    SmartDashboard.putNumber("BL Raw Analog Position", moduleBL.getAnalogPositionRaw());
-    SmartDashboard.putNumber("BR Raw Analog Position", moduleBR.getAnalogPositionRaw());
-
-    // Display the module angle as calculated using the absolute encoder.
-    SmartDashboard.putNumber("FL Module Angle", moduleFL.getModuleAngle(Constants.DriveConstants.FL_GEAR_RATIO));
-    SmartDashboard.putNumber("FR Module Angle", moduleFR.getModuleAngle(Constants.DriveConstants.FR_GEAR_RATIO));
-    SmartDashboard.putNumber("BL Module Angle", moduleBL.getModuleAngle(Constants.DriveConstants.BL_GEAR_RATIO));
-    SmartDashboard.putNumber("BR Module Angle", moduleBR.getModuleAngle(Constants.DriveConstants.BR_GEAR_RATIO));
-  }
+    moduleFL.updateSmartDahsboard();
+    moduleFR.updateSmartDahsboard();
+    moduleBL.updateSmartDahsboard();
+    moduleBR.updateSmartDahsboard();
+   }
 
   @Override
   /**
@@ -236,14 +215,17 @@ FIRST Robotics Competition </a> by Tyler Veness for more information.
     }
 
     SwerveDriveKinematics.normalizeWheelSpeeds(moduleStates, Constants.DriveConstants.maxSpeed);
-    speeds = new double[]{moduleStates[0].speedMetersPerSecond, moduleStates[1].speedMetersPerSecond,
-                            moduleStates[2].speedMetersPerSecond, moduleStates[3].speedMetersPerSecond};
     SmartDashboard.putNumber("BL Swerve State Angle", moduleStates[2].angle.getRadians());
     SmartDashboard.putNumber("BL Selected Sensor Position", moduleBL.getSensorPosition());
-    moduleFL.move(speeds[0], moduleStates[0].angle.getRadians(), Constants.DriveConstants.maxSpeed, -Constants.DriveConstants.kDriveModifier, Constants.DriveConstants.reversedFL);
-    moduleFR.move(speeds[1], moduleStates[1].angle.getRadians(), Constants.DriveConstants.maxSpeed, Constants.DriveConstants.kDriveModifier, Constants.DriveConstants.reversedFR);
-    moduleBL.move(speeds[2], moduleStates[2].angle.getRadians(), Constants.DriveConstants.maxSpeed, -Constants.DriveConstants.kDriveModifier, Constants.DriveConstants.reversedBL);
-    moduleBR.move(speeds[3], moduleStates[3].angle.getRadians(), Constants.DriveConstants.maxSpeed, Constants.DriveConstants.kDriveModifier, Constants.DriveConstants.reversedBR);
+
+    moduleFL.move(moduleStates[0].speedMetersPerSecond, moduleStates[0].angle.getRadians(), 
+                  Constants.DriveConstants.maxSpeed,  -Constants.DriveConstants.kDriveModifier, Constants.DriveConstants.reversedFL);
+    moduleFR.move(moduleStates[1].speedMetersPerSecond, moduleStates[1].angle.getRadians(), 
+                  Constants.DriveConstants.maxSpeed, Constants.DriveConstants.kDriveModifier, Constants.DriveConstants.reversedFR);
+    moduleBL.move(moduleStates[2].speedMetersPerSecond, moduleStates[2].angle.getRadians(), 
+                  Constants.DriveConstants.maxSpeed, -Constants.DriveConstants.kDriveModifier, Constants.DriveConstants.reversedBL);
+    moduleBR.move(moduleStates[3].speedMetersPerSecond, moduleStates[3].angle.getRadians(), 
+                  Constants.DriveConstants.maxSpeed, Constants.DriveConstants.kDriveModifier, Constants.DriveConstants.reversedBR);
   }
 
   /**

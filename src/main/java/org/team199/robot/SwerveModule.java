@@ -8,15 +8,38 @@ import org.team199.lib.SwerveMath;
 
 import edu.wpi.first.wpilibj.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.kinematics.SwerveModuleState;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class SwerveModule {
+    // FL = Forward-Left, FR = Forward-Right, BL = Backward-Left, BR = Backward-Right
+    public enum ModuleType {FL, FR, BL, BR};
+
+    private ModuleType type;
+    private String moduleString;
     private WPI_TalonSRX drive;
     private WPI_TalonSRX turn;
     private double gearRatio;
     public double targetAngle;
     private double expectedSpeed;
 
-    public SwerveModule(WPI_TalonSRX drive, WPI_TalonSRX turn, double gearRatio) {
+    public SwerveModule(ModuleType type, WPI_TalonSRX drive, WPI_TalonSRX turn, double gearRatio) {
+        this.type = type;
+
+        switch (type) {
+            case FL:
+                moduleString = "FL";
+                break;
+            case FR:
+                moduleString = "FR";
+                break;
+            case BL:
+                moduleString = "BL";
+                break;
+            case BR:
+                moduleString = "BR";
+                break;
+        }
+
         this.drive = drive;
         this.drive.setSensorPhase(true);
         this.drive.configAllowableClosedloopError(0, 4);
@@ -104,5 +127,18 @@ public class SwerveModule {
 
     public SwerveModuleState getCurrentState() {
         return new SwerveModuleState(expectedSpeed, new Rotation2d(getModuleAngle(gearRatio)));
+    }
+
+    public void updateSmartDahsboard() {
+        // Display the angle that the module is trying to reach.
+        SmartDashboard.putNumber(moduleString + " Target Angle", targetAngle);
+        // Display the position of the quadrature encoder.
+        SmartDashboard.putNumber(moduleString + " Quadrature Position", getQuadraturePosition());
+        // Display the position of the analog encoder.
+        SmartDashboard.putNumber(moduleString + " Analog Position", getAnalogPosition());
+        // Display the raw position of the analog encoder.
+        SmartDashboard.putNumber(moduleString + " Raw Analog Position", getAnalogPositionRaw());
+        // Display the module angle as calculated using the absolute encoder.
+        SmartDashboard.putNumber(moduleString + " Module Angle", getModuleAngle(gearRatio));
     }
 }

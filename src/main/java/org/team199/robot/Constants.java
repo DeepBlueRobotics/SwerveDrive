@@ -90,9 +90,9 @@ public final class Constants {
     }
 
     public static final class OI {
-        public enum ControlType {JOYSTICKS, GAMEPAD};
-        public enum StickType {LEFT, RIGHT};
-        public enum StickDirection {X, Y};
+        public static enum ControlType {JOYSTICKS, GAMEPAD};
+        public static enum StickType {LEFT, RIGHT};
+        public static enum StickDirection {X, Y};
 
         public static ControlType CONTROL_TYPE = ControlType.GAMEPAD;
         public static final double JOY_THRESH = 0.01;
