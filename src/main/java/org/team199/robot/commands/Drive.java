@@ -1,9 +1,10 @@
 package org.team199.robot.commands;
 
+import java.util.function.Supplier;
+
 import org.team199.robot.Constants;
 import org.team199.robot.subsystems.Drivetrain;
 
-import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 
 /**
@@ -11,21 +12,17 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
  */
 public class Drive extends CommandBase {
     private Drivetrain drivetrain;
-    private Joystick leftJoy;
-    private Joystick rightJoy;
-    private Joystick gamepad;
+    private Supplier<Double> fwd;
+    private Supplier<Double> str;
+    private Supplier<Double> rcw;
 
-    public Drive(Drivetrain drivetrain, Joystick leftJoy, Joystick rightJoy) {
+    public Drive(Drivetrain drivetrain, Supplier<Double> fwd, Supplier<Double> str, Supplier<Double> rcw) {
         addRequirements(this.drivetrain = drivetrain);
-        this.leftJoy = leftJoy;
-        this.rightJoy = rightJoy;
+        this.fwd = fwd;
+        this.str = str;
+        this.rcw = rcw;
     }
-
-    public Drive(Drivetrain drivetrain, Joystick gamepad) {
-        addRequirements(this.drivetrain = drivetrain);
-        this.gamepad = gamepad;
-    }
-
+    
     @Override
     public void initialize() {
     }
@@ -33,23 +30,14 @@ public class Drive extends CommandBase {
     @Override
     public void execute() {
         double forward, strafe, rotateClockwise;
-        if (Constants.OI.CONTROL_TYPE == Constants.OI.ControlType.JOYSTICKS) {
-            // Inputs to drive are m/s, so joysticks are percentage values of the maximum forward, strafe, and rcw.
-            if (Math.abs(leftJoy.getY()) <= Constants.OI.JOY_THRESH) forward = 0.0;
-            else forward = Constants.DriveConstants.maxForward * -leftJoy.getY();     // Left joy Y is inverted.
-            if (Math.abs(leftJoy.getX()) <= Constants.OI.JOY_THRESH) strafe = 0.0;
-            else strafe = Constants.DriveConstants.maxStrafe * leftJoy.getX();
-            if (Math.abs(rightJoy.getX()) <= Constants.OI.JOY_THRESH) rotateClockwise = 0.0;
-            else rotateClockwise = Constants.DriveConstants.maxRCW * rightJoy.getX();
-        } else {
-            // Inputs to drive are m/s, so joysticks are percentage values of the maximum forward, strafe, and rcw.
-            if (Math.abs(gamepad.getRawAxis(1)) <= Constants.OI.JOY_THRESH) forward = 0.0;
-            else forward = Constants.DriveConstants.maxForward * -gamepad.getRawAxis(1);     // Left joy Y is inverted.
-            if (Math.abs(gamepad.getRawAxis(0)) <= Constants.OI.JOY_THRESH) strafe = 0.0;
-            else strafe = Constants.DriveConstants.maxStrafe * gamepad.getRawAxis(0);
-            if (Math.abs(gamepad.getRawAxis(2)) <= Constants.OI.JOY_THRESH) rotateClockwise = 0.0;
-            else rotateClockwise = Constants.DriveConstants.maxRCW * gamepad.getRawAxis(2);
-        }
+
+        if (Math.abs(fwd.get()) <= Constants.OI.JOY_THRESH) forward = 0.0;
+        else forward = Constants.DriveConstants.maxForward * fwd.get();     // Left joy Y is inverted.
+        if (Math.abs(str.get()) <= Constants.OI.JOY_THRESH) strafe = 0.0;
+        else strafe = Constants.DriveConstants.maxStrafe * str.get();
+        if (Math.abs(rcw.get()) <= Constants.OI.JOY_THRESH) rotateClockwise = 0.0;
+        else rotateClockwise = Constants.DriveConstants.maxRCW * rcw.get();
+        
         drivetrain.drive(forward, strafe, rotateClockwise);
     }
 

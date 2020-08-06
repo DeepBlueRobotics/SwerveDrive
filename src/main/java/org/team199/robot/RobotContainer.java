@@ -23,7 +23,7 @@ public class RobotContainer {
   private Joystick gamepad;
   private JoystickButton homeAbsolute;
 
-  private final Drivetrain drivetrain = new Drivetrain(Drivetrain.SwerveImplementation.WPILib);
+  public final Drivetrain drivetrain = new Drivetrain(Drivetrain.SwerveImplementation.WPILib);
 
   public RobotContainer() {
     switch (Constants.OI.CONTROL_TYPE) {
@@ -36,7 +36,6 @@ public class RobotContainer {
 
           if (DriverStation.getInstance().getJoystickName(Constants.OI.RightJoy.kPort).length() != 0) {
             configureButtonBindingsRightJoy();
-            drivetrain.setDefaultCommand(new Drive(drivetrain, leftJoy, rightJoy));
           } else {
             System.err.println("ERROR: Right Joystick missing. Perhaps it was not plugged in correctly?");
           }
@@ -49,12 +48,16 @@ public class RobotContainer {
 
         if (DriverStation.getInstance().getJoystickName(Constants.OI.Manipulator.kPort).length() != 0) {
           configureButtonBindingsGamepad();
-          drivetrain.setDefaultCommand(new Drive(drivetrain, gamepad));
         } else {
           System.err.println("ERROR: Manipulator missing. Perhaps it was not plugged in correctly?");
         }
         break;
-      }
+    }
+
+    drivetrain.setDefaultCommand(new Drive(drivetrain, 
+                                 () -> getStickValue(Constants.OI.StickType.LEFT, Constants.OI.StickDirection.Y),
+                                 () -> getStickValue(Constants.OI.StickType.LEFT, Constants.OI.StickDirection.X),
+                                 () -> getStickValue(Constants.OI.StickType.RIGHT, Constants.OI.StickDirection.X)));
   }
 
   private void configureButtonBindingsLeftJoy() {
@@ -85,4 +88,21 @@ public class RobotContainer {
   /*public void homeAbsolutePressed() {
     System.out.println(gamepad.getRawButtonPressed(Constants.OI.Manipulator.homeAbsolute));
   }*/
+
+  public double getStickValue(Constants.OI.StickType stick, Constants.OI.StickDirection dir) {
+    switch (Constants.OI.CONTROL_TYPE) {
+      case JOYSTICKS:
+        if (stick == Constants.OI.StickType.LEFT && dir == Constants.OI.StickDirection.X) return leftJoy.getX();
+        if (stick == Constants.OI.StickType.LEFT && dir == Constants.OI.StickDirection.Y) return -leftJoy.getY();
+        if (stick == Constants.OI.StickType.RIGHT && dir == Constants.OI.StickDirection.X) return rightJoy.getX();
+        if (stick == Constants.OI.StickType.RIGHT && dir == Constants.OI.StickDirection.Y) return -rightJoy.getY();
+      case GAMEPAD:
+        if (stick == Constants.OI.StickType.LEFT && dir == Constants.OI.StickDirection.X) return gamepad.getRawAxis(0);
+        if (stick == Constants.OI.StickType.LEFT && dir == Constants.OI.StickDirection.Y) return -gamepad.getRawAxis(1);
+        if (stick == Constants.OI.StickType.RIGHT && dir == Constants.OI.StickDirection.X) return gamepad.getRawAxis(2);
+        if (stick == Constants.OI.StickType.RIGHT && dir == Constants.OI.StickDirection.Y) return -gamepad.getRawAxis(3);
+      default: return 0;
+    }
+  }
+
 }
