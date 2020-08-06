@@ -42,7 +42,7 @@ public class HomeAbsolute extends InstantCommand {
             drivetrain.modules[i].setSensorPosition((int) quadPos);
 
             // Make sure we actually turn to the correct position.
-            drivetrain.modules[i].setAngle(0.0, false);
+            drivetrain.modules[i].setAngle(0.0);
         }
     }
 
