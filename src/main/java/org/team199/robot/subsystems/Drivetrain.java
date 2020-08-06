@@ -164,7 +164,7 @@ FIRST Robotics Competition </a> by Tyler Veness for more information.
       odometry.getPoseMeters().getRotation().getRadians() : pose.getRotation().getRadians());
 
     for (int i = 0; i < 4; i++) {
-      modules[i].updateSmartDahsboard();
+      modules[i].updateSmartDashboard();
     }
    }
 
@@ -211,8 +211,8 @@ FIRST Robotics Competition </a> by Tyler Veness for more information.
 
     // Move the modules based on desired (normalized) speed, desired angle, max speed, drive modifier, and whether or not to reverse turning.
     for (int i = 0; i < 4; i++) {
-      modules[i].move(moduleStates[0].speedMetersPerSecond, moduleStates[0].angle.getRadians(), 
-                  Constants.DriveConstants.maxSpeed,  -Constants.DriveConstants.kDriveModifier, Constants.DriveConstants.reversed[i]);
+      modules[i].move(moduleStates[i].speedMetersPerSecond, moduleStates[i].angle.getRadians(), 
+                  Constants.DriveConstants.maxSpeed, Math.pow(-1, i + 1) * Constants.DriveConstants.kDriveModifier, Constants.DriveConstants.reversed[i]);
     }
   }
 

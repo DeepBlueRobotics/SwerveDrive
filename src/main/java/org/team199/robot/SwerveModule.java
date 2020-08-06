@@ -192,7 +192,7 @@ public class SwerveModule {
     /**
      * Updates SmartDashboard with information about this module.
      */
-    public void updateSmartDahsboard() {
+    public void updateSmartDashboard() {
         // Display the angle that the module is trying to reach.
         SmartDashboard.putNumber(moduleString + " Target Angle", targetAngle);
         // Display the position of the quadrature encoder.
