@@ -25,6 +25,8 @@ public class SwerveModule {
     public double targetAngle;
     private double expectedSpeed;
     private double driveModifier;
+    private double maxSpeed;
+    private boolean reversed;
 
     /**
      * @param type    The type of the swerve module, either FL (Forward-Left), FR (Forward-Right), 
@@ -33,8 +35,12 @@ public class SwerveModule {
      * @param turn    The TalonSRX motor controller for turning the module into the correct orientation.
      * @param gearRatio     The gear ratio for the <i> turn </i> motor controller.
      *                      Used for determining the angle of the module.
+     * @param driveModifier     A double which controls the speed passed into drive.setSpeed()
+     * @param maxSpeed          The maximum speed, in m/s, of the SwerveModule. This should be the same speed when normalizing.
+     * @param reversed          Whether or not to reverse the turn motor controller.
      */
-    public SwerveModule(ModuleType type, WPI_TalonSRX drive, WPI_TalonSRX turn, double gearRatio, double driveModifier) {
+    public SwerveModule(ModuleType type, WPI_TalonSRX drive, WPI_TalonSRX turn, double gearRatio, double driveModifier,
+                        double maxSpeed, boolean reversed) {
         this.type = type;
 
         switch (type) {
@@ -60,6 +66,8 @@ public class SwerveModule {
         this.turn.configAllowableClosedloopError(0, 4);
         this.gearRatio = gearRatio;
         this.driveModifier = driveModifier;
+        this.maxSpeed = maxSpeed;
+        this.reversed = reversed;
         expectedSpeed = 0.0;
         changeSelectedSensor(FeedbackDevice.QuadEncoder);
     }
@@ -68,27 +76,22 @@ public class SwerveModule {
      * Move the module to a specified angle and drive at a specified speed.
      * @param normalizedSpeed   The desired speed normalized with respect to a maximum speed, in m/s.
      * @param angle             The desired angle, in radians.
-     * @param maxSpeed          The maximum speed at which to drive at, in m/s.
-     * @param driveModifier     A constant for controlling how fast the robot drives.
-     * @param reversed          A boolean representing whether or not to reverse turning.
      */
-    public void move(double normalizedSpeed, double angle, double maxSpeed, boolean reversed) {
+    public void move(double normalizedSpeed, double angle) {
         double setpoints[] = SwerveMath.computeSetpoints(normalizedSpeed / maxSpeed,
                                                          -angle / (2 * Math.PI),
                                                          getSensorPosition(),
                                                          gearRatio);
         System.out.println("Move Values: " + setpoints[0] + ", " + setpoints[1]);
-        setSpeed(setpoints[0], maxSpeed);
-        if(setpoints[0] != 0.0) setAngle(setpoints[1], reversed);
+        setSpeed(setpoints[0]);
+        if(setpoints[0] != 0.0) setAngle(setpoints[1]);
     }
 
     /**
      * Sets the speed for the drive motor controller.
      * @param speed     The desired speed, from -1.0 (maximum speed directed backwards) to 1.0 (maximum speed directed forwards).
-     * @param maxSpeed  The maximum speed at which to drive at, in m/s^2.
-     * @param driveModifier     A constant for controlling how fast the robot drives.
      */
-    public void setSpeed(double speed, double maxSpeed) {
+    public void setSpeed(double speed) {
         // There are no encoders on the drive motor controllers so assume current speed = expected speed
         expectedSpeed = maxSpeed * speed * driveModifier;
         drive.set(ControlMode.PercentOutput, speed * driveModifier);
@@ -97,9 +100,8 @@ public class SwerveModule {
     /**
      * Sets the angle for the turn motor controller.
      * @param angle     The desired angle, between -0.5 (180 degrees counterclockwise) and 0.5 (180 degrees clockwise).
-     * @param reversed  A boolean representing whether or not to reverse turning.
      */
-    public void setAngle(double angle, boolean reversed) {
+    public void setAngle(double angle) {
         targetAngle = (reversed ? -1 : 1) * angle * gearRatio;
         turn.set(ControlMode.Position, targetAngle);
     }
@@ -134,6 +136,22 @@ public class SwerveModule {
      */
     public void setDriveModifier(double modifier) {
         driveModifier = modifier;
+    }
+
+    /**
+     * Sets the value of the reversed variable.
+     * @param reversed      The new value of reversed.
+     */
+    public void setReversed(boolean reversed) {
+        this.reversed = reversed;
+    }
+
+    /**
+     * Sets the value of the maxSpeed variable.
+     * @param maxSpeed      The new value of maxSpeed.
+     */
+    public void setMaxSpeed(double maxSpeed) {
+        this.maxSpeed = maxSpeed;
     }
 
     /** 
