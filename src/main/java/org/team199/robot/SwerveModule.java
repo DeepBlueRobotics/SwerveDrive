@@ -34,13 +34,13 @@ public class SwerveModule {
                                                          getSensorPosition(),
                                                          gearRatio);
         System.out.println("Move Values: " + setpoints[0] + ", " + setpoints[1]);
-        setSpeed(setpoints[0], driveModifier);
-        // There are no encoders on the drive motor controllers so assume current speed = expected speed
-        expectedSpeed = maxSpeed * setpoints[0];
+        setSpeed(setpoints[0], maxSpeed, driveModifier);
         if(setpoints[0] != 0.0) setAngle(setpoints[1], reversed);
     }
 
-    public void setSpeed(double speed, double driveModifier) {
+    public void setSpeed(double speed, double maxSpeed, double driveModifier) {
+        // There are no encoders on the drive motor controllers so assume current speed = expected speed
+        expectedSpeed = maxSpeed * speed * driveModifier;
         drive.set(ControlMode.PercentOutput, speed * driveModifier);
     }
 
