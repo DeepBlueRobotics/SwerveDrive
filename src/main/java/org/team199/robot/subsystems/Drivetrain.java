@@ -52,10 +52,7 @@ public class Drivetrain extends SubsystemBase {
   private final boolean isGyroReversed = true;
 
   // SwerveModules for each "side" of the robot.
-  public SwerveModule moduleFL;
-  public SwerveModule moduleFR;
-  public SwerveModule moduleBL;
-  public SwerveModule moduleBR;
+  public SwerveModule modules[];
 
   // Odometry equivalent for non-WPILib implementation
   public Pose2d pose;
@@ -72,34 +69,29 @@ public class Drivetrain extends SubsystemBase {
     double heading = Math.toRadians(getHeading());
 
     // Initialize SwerveModules
-    moduleFL = new SwerveModule(SwerveModule.ModuleType.FL,
+    SwerveModule moduleFL = new SwerveModule(SwerveModule.ModuleType.FL,
                                 MotorControllerFactory.createTalon(Constants.Ports.kDriveFrontLeft), 
                                 MotorControllerFactory.createTalon(Constants.Ports.kTurnFrontLeft), 
-                                Constants.DriveConstants.FL_GEAR_RATIO);
-    moduleFR = new SwerveModule(SwerveModule.ModuleType.FR,
+                                Constants.DriveConstants.GEAR_RATIO[0]);
+    SwerveModule moduleFR = new SwerveModule(SwerveModule.ModuleType.FR,
                                 MotorControllerFactory.createTalon(Constants.Ports.kDriveFrontRight), 
                                 MotorControllerFactory.createTalon(Constants.Ports.kTurnFrontRight), 
-                                Constants.DriveConstants.FR_GEAR_RATIO);
-    moduleBL = new SwerveModule(SwerveModule.ModuleType.BL,
+                                Constants.DriveConstants.GEAR_RATIO[1]);
+    SwerveModule moduleBL = new SwerveModule(SwerveModule.ModuleType.BL,
                                 MotorControllerFactory.createTalon(Constants.Ports.kDriveBackLeft), 
                                 MotorControllerFactory.createTalon(Constants.Ports.kTurnBackLeft), 
-                                Constants.DriveConstants.BL_GEAR_RATIO);
-    moduleBR = new SwerveModule(SwerveModule.ModuleType.BR,
+                                Constants.DriveConstants.GEAR_RATIO[2]);
+    SwerveModule moduleBR = new SwerveModule(SwerveModule.ModuleType.BR,
                                 MotorControllerFactory.createTalon(Constants.Ports.kDriveBackRight), 
                                 MotorControllerFactory.createTalon(Constants.Ports.kTurnBackRight), 
-                                Constants.DriveConstants.BR_GEAR_RATIO);
+                                Constants.DriveConstants.GEAR_RATIO[3]);
+    modules = new SwerveModule[]{moduleFL, moduleFR, moduleBL, moduleBR};
 
     // Configure PID control constants for drive motor controllers
-    moduleFL.setDrivePID(Constants.DriveConstants.driveKP[0], Constants.DriveConstants.driveKI[0], Constants.DriveConstants.driveKD[0]);
-    moduleFR.setDrivePID(Constants.DriveConstants.driveKP[1], Constants.DriveConstants.driveKI[1], Constants.DriveConstants.driveKD[1]);
-    moduleBL.setDrivePID(Constants.DriveConstants.driveKP[2], Constants.DriveConstants.driveKI[2], Constants.DriveConstants.driveKD[2]);
-    moduleBR.setDrivePID(Constants.DriveConstants.driveKP[3], Constants.DriveConstants.driveKI[3], Constants.DriveConstants.driveKD[3]);
-
-    // Configure PID control constants for turn motor controllers
-    moduleFL.setTurnPID(Constants.DriveConstants.turnKP[0], Constants.DriveConstants.turnKI[0], Constants.DriveConstants.turnKD[0]);
-    moduleFR.setTurnPID(Constants.DriveConstants.turnKP[1], Constants.DriveConstants.turnKI[1], Constants.DriveConstants.turnKD[1]);
-    moduleBL.setTurnPID(Constants.DriveConstants.turnKP[2], Constants.DriveConstants.turnKI[2], Constants.DriveConstants.turnKD[2]);
-    moduleBR.setTurnPID(Constants.DriveConstants.turnKP[3], Constants.DriveConstants.turnKI[3], Constants.DriveConstants.turnKD[3]);
+    for (int i = 0; i < 4; i++) {
+      modules[i].setDrivePID(Constants.DriveConstants.driveKP[i], Constants.DriveConstants.driveKI[i], Constants.DriveConstants.driveKD[i]);
+      modules[i].setTurnPID(Constants.DriveConstants.turnKP[i], Constants.DriveConstants.turnKI[i], Constants.DriveConstants.turnKD[i]);
+    }
 
     // Decide whether or not to use custom implementation of swerve drive or use WPILib implementation using Odometry/Kinematics.
     if (implementation == SwerveImplementation.WPILib) {
@@ -125,25 +117,24 @@ public class Drivetrain extends SubsystemBase {
 FIRST Robotics Competition </a> by Tyler Veness for more information.
    */
   public void updateOdometry() {
-    SwerveModuleState flState = moduleFL.getCurrentState();
-    SwerveModuleState frState = moduleFR.getCurrentState();
-    SwerveModuleState blState = moduleBL.getCurrentState();
-    SwerveModuleState brState = moduleBR.getCurrentState();
+    SwerveModuleState states[] =  new SwerveModuleState[4];
+    for (int i = 0; i < 4; i++) {
+      states[i] = modules[i].getCurrentState();
+    }
 
     if (implementation == SwerveImplementation.WPILib) {
-      odometry.update(Rotation2d.fromDegrees(getHeading()), flState, frState, blState, brState);
+      odometry.update(Rotation2d.fromDegrees(getHeading()), states);
     } else {
       // Do the inverse of swerve math; rather than calculate swerve module states from chassis speeds, calculate chassis speeds from swerve module states.
       double temp[] = new double[3];
       if (SmartDashboard.getBoolean("Field Oriented", true)) {
         temp = SwerveMath.inverseSwerve(Constants.DriveConstants.wheelBase,
                                         Constants.DriveConstants.trackWidth, 
-                                        getHeading(), 
-                                        flState, frState, blState, brState);
+                                        getHeading(), states);
       } else {
         temp = SwerveMath.inverseSwerve(Constants.DriveConstants.wheelBase,
                                         Constants.DriveConstants.trackWidth,
-                                        flState, frState, blState, brState);
+                                        states);
       }
 
       // Only forward and strafe are required
@@ -172,10 +163,9 @@ FIRST Robotics Competition </a> by Tyler Veness for more information.
     SmartDashboard.putNumber("Pose Rotation (Radians)", (implementation == SwerveImplementation.WPILib) ? 
       odometry.getPoseMeters().getRotation().getRadians() : pose.getRotation().getRadians());
 
-    moduleFL.updateSmartDahsboard();
-    moduleFR.updateSmartDahsboard();
-    moduleBL.updateSmartDahsboard();
-    moduleBR.updateSmartDahsboard();
+    for (int i = 0; i < 4; i++) {
+      modules[i].updateSmartDahsboard();
+    }
    }
 
   @Override
@@ -217,17 +207,13 @@ FIRST Robotics Competition </a> by Tyler Veness for more information.
 
     SwerveDriveKinematics.normalizeWheelSpeeds(moduleStates, Constants.DriveConstants.maxSpeed);
     SmartDashboard.putNumber("BL Swerve State Angle", moduleStates[2].angle.getRadians());
-    SmartDashboard.putNumber("BL Selected Sensor Position", moduleBL.getSensorPosition());
+    SmartDashboard.putNumber("BL Selected Sensor Position", modules[2].getSensorPosition());
 
     // Move the modules based on desired (normalized) speed, desired angle, max speed, drive modifier, and whether or not to reverse turning.
-    moduleFL.move(moduleStates[0].speedMetersPerSecond, moduleStates[0].angle.getRadians(), 
-                  Constants.DriveConstants.maxSpeed,  -Constants.DriveConstants.kDriveModifier, Constants.DriveConstants.reversedFL);
-    moduleFR.move(moduleStates[1].speedMetersPerSecond, moduleStates[1].angle.getRadians(), 
-                  Constants.DriveConstants.maxSpeed, Constants.DriveConstants.kDriveModifier, Constants.DriveConstants.reversedFR);
-    moduleBL.move(moduleStates[2].speedMetersPerSecond, moduleStates[2].angle.getRadians(), 
-                  Constants.DriveConstants.maxSpeed, -Constants.DriveConstants.kDriveModifier, Constants.DriveConstants.reversedBL);
-    moduleBR.move(moduleStates[3].speedMetersPerSecond, moduleStates[3].angle.getRadians(), 
-                  Constants.DriveConstants.maxSpeed, Constants.DriveConstants.kDriveModifier, Constants.DriveConstants.reversedBR);
+    for (int i = 0; i < 4; i++) {
+      modules[i].move(moduleStates[0].speedMetersPerSecond, moduleStates[0].angle.getRadians(), 
+                  Constants.DriveConstants.maxSpeed,  -Constants.DriveConstants.kDriveModifier, Constants.DriveConstants.reversed[i]);
+    }
   }
 
   /**
