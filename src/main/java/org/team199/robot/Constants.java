@@ -36,7 +36,11 @@ public final class Constants {
         public static final double maxForward = 11.5 * 12 * inchToMeter;
         public static final double maxStrafe = 11.5 * 12 * inchToMeter;
         public static final double maxSpeed = 11.5 * 12 * inchToMeter;
-        public static final double maxRCW = Math.PI / 2;
+        // maxRCW is the angular velocity of the robot.
+        // Calculated by looking at one of the motors and treating it as a point mass moving around in a circle.
+        // Tangential speed of this point mass is maxSpeed and the radius of the circle is sqrt((wheelBase/2)^2 + (trackWidth/2)^2)
+        // Angular velocity = Tangential speed / radius
+        public static final double maxRCW = maxSpeed / Math.sqrt(Math.pow(wheelBase / 2, 2) + Math.pow(trackWidth / 2, 2));
 
         // kP, kI, and kD constants for drive motor controllers in the order of front-left, front-right, back-left, back-right.
         public static final double[] driveKP = {20.0, 20.0, 20.0, 20.0};
