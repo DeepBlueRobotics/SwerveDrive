@@ -72,19 +72,23 @@ public class Drivetrain extends SubsystemBase {
     SwerveModule moduleFL = new SwerveModule(SwerveModule.ModuleType.FL,
                                 MotorControllerFactory.createTalon(Constants.Ports.kDriveFrontLeft), 
                                 MotorControllerFactory.createTalon(Constants.Ports.kTurnFrontLeft), 
-                                Constants.DriveConstants.GEAR_RATIO[0]);
+                                Constants.DriveConstants.GEAR_RATIO[0],
+                                -Constants.DriveConstants.kDriveModifier);
     SwerveModule moduleFR = new SwerveModule(SwerveModule.ModuleType.FR,
                                 MotorControllerFactory.createTalon(Constants.Ports.kDriveFrontRight), 
                                 MotorControllerFactory.createTalon(Constants.Ports.kTurnFrontRight), 
-                                Constants.DriveConstants.GEAR_RATIO[1]);
+                                Constants.DriveConstants.GEAR_RATIO[1],
+                                Constants.DriveConstants.kDriveModifier);
     SwerveModule moduleBL = new SwerveModule(SwerveModule.ModuleType.BL,
                                 MotorControllerFactory.createTalon(Constants.Ports.kDriveBackLeft), 
                                 MotorControllerFactory.createTalon(Constants.Ports.kTurnBackLeft), 
-                                Constants.DriveConstants.GEAR_RATIO[2]);
+                                Constants.DriveConstants.GEAR_RATIO[2],
+                                -Constants.DriveConstants.kDriveModifier);
     SwerveModule moduleBR = new SwerveModule(SwerveModule.ModuleType.BR,
                                 MotorControllerFactory.createTalon(Constants.Ports.kDriveBackRight), 
                                 MotorControllerFactory.createTalon(Constants.Ports.kTurnBackRight), 
-                                Constants.DriveConstants.GEAR_RATIO[3]);
+                                Constants.DriveConstants.GEAR_RATIO[3],
+                                Constants.DriveConstants.kDriveModifier);
     modules = new SwerveModule[]{moduleFL, moduleFR, moduleBL, moduleBR};
 
     // Configure PID control constants for drive motor controllers
@@ -212,7 +216,7 @@ FIRST Robotics Competition </a> by Tyler Veness for more information.
     // Move the modules based on desired (normalized) speed, desired angle, max speed, drive modifier, and whether or not to reverse turning.
     for (int i = 0; i < 4; i++) {
       modules[i].move(moduleStates[i].speedMetersPerSecond, moduleStates[i].angle.getRadians(), 
-                  Constants.DriveConstants.maxSpeed, Math.pow(-1, i + 1) * Constants.DriveConstants.kDriveModifier, Constants.DriveConstants.reversed[i]);
+                  Constants.DriveConstants.maxSpeed, Constants.DriveConstants.reversed[i]);
     }
   }
 

@@ -24,6 +24,7 @@ public class SwerveModule {
     private double gearRatio;
     public double targetAngle;
     private double expectedSpeed;
+    private double driveModifier;
 
     /**
      * @param type    The type of the swerve module, either FL (Forward-Left), FR (Forward-Right), 
@@ -33,7 +34,7 @@ public class SwerveModule {
      * @param gearRatio     The gear ratio for the <i> turn </i> motor controller.
      *                      Used for determining the angle of the module.
      */
-    public SwerveModule(ModuleType type, WPI_TalonSRX drive, WPI_TalonSRX turn, double gearRatio) {
+    public SwerveModule(ModuleType type, WPI_TalonSRX drive, WPI_TalonSRX turn, double gearRatio, double driveModifier) {
         this.type = type;
 
         switch (type) {
@@ -58,6 +59,7 @@ public class SwerveModule {
         this.turn.setSensorPhase(true);
         this.turn.configAllowableClosedloopError(0, 4);
         this.gearRatio = gearRatio;
+        this.driveModifier = driveModifier;
         expectedSpeed = 0.0;
         changeSelectedSensor(FeedbackDevice.QuadEncoder);
     }
@@ -70,13 +72,13 @@ public class SwerveModule {
      * @param driveModifier     A constant for controlling how fast the robot drives.
      * @param reversed          A boolean representing whether or not to reverse turning.
      */
-    public void move(double normalizedSpeed, double angle, double maxSpeed, double driveModifier, boolean reversed) {
+    public void move(double normalizedSpeed, double angle, double maxSpeed, boolean reversed) {
         double setpoints[] = SwerveMath.computeSetpoints(normalizedSpeed / maxSpeed,
                                                          -angle / (2 * Math.PI),
                                                          getSensorPosition(),
                                                          gearRatio);
         System.out.println("Move Values: " + setpoints[0] + ", " + setpoints[1]);
-        setSpeed(setpoints[0], maxSpeed, driveModifier);
+        setSpeed(setpoints[0], maxSpeed);
         if(setpoints[0] != 0.0) setAngle(setpoints[1], reversed);
     }
 
@@ -86,7 +88,7 @@ public class SwerveModule {
      * @param maxSpeed  The maximum speed at which to drive at, in m/s^2.
      * @param driveModifier     A constant for controlling how fast the robot drives.
      */
-    public void setSpeed(double speed, double maxSpeed, double driveModifier) {
+    public void setSpeed(double speed, double maxSpeed) {
         // There are no encoders on the drive motor controllers so assume current speed = expected speed
         expectedSpeed = maxSpeed * speed * driveModifier;
         drive.set(ControlMode.PercentOutput, speed * driveModifier);
@@ -124,6 +126,14 @@ public class SwerveModule {
         turn.config_kP(0, kP);
         turn.config_kI(0, kI);
         turn.config_kD(0, kD);
+    }
+
+    /**
+     * Sets the value of the driveModifier variable.
+     * @param modifier      The new value of the driveModifier.
+     */
+    public void setDriveModifier(double modifier) {
+        driveModifier = modifier;
     }
 
     /** 
