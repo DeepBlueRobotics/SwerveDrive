@@ -51,6 +51,7 @@ public class Drivetrain extends SubsystemBase {
   private final AHRS gyro = new AHRS(SerialPort.Port.kUSB1);
   private final boolean isGyroReversed = true;
 
+  // SwerveModules for each "side" of the robot.
   public SwerveModule moduleFL;
   public SwerveModule moduleFR;
   public SwerveModule moduleBL;
@@ -218,6 +219,7 @@ FIRST Robotics Competition </a> by Tyler Veness for more information.
     SmartDashboard.putNumber("BL Swerve State Angle", moduleStates[2].angle.getRadians());
     SmartDashboard.putNumber("BL Selected Sensor Position", moduleBL.getSensorPosition());
 
+    // Move the modules based on desired (normalized) speed, desired angle, max speed, drive modifier, and whether or not to reverse turning.
     moduleFL.move(moduleStates[0].speedMetersPerSecond, moduleStates[0].angle.getRadians(), 
                   Constants.DriveConstants.maxSpeed,  -Constants.DriveConstants.kDriveModifier, Constants.DriveConstants.reversedFL);
     moduleFR.move(moduleStates[1].speedMetersPerSecond, moduleStates[1].angle.getRadians(), 

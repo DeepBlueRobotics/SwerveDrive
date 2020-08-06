@@ -48,11 +48,13 @@ public class HomeAbsolute extends InstantCommand {
         brQuadPos = (Math.abs(Constants.DriveConstants.BR_GEAR_RATIO) / Constants.DriveConstants.BR_MAX_ANALOG) * 
                     (drivetrain.moduleBR.getAnalogPositionRaw() - Constants.DriveConstants.BR_TURN_ZERO);
         
+        // Set the orientation of the modules to what they would be relative to TURN_ZERO.
         drivetrain.moduleFL.setSensorPosition((int) flQuadPos);
         drivetrain.moduleFR.setSensorPosition((int) frQuadPos);
         drivetrain.moduleBL.setSensorPosition((int) blQuadPos);
         drivetrain.moduleBR.setSensorPosition((int) brQuadPos);
 
+        // Make sure we actually turn to the correct position.
         drivetrain.moduleFL.setAngle(0.0, false);
         drivetrain.moduleFR.setAngle(0.0, false);
         drivetrain.moduleBL.setAngle(0.0, false);

@@ -90,6 +90,7 @@ public final class Constants {
     }
 
     public static final class OI {
+        // For determining outputs of joysticks.
         public static enum ControlType {JOYSTICKS, GAMEPAD};
         public static enum StickType {LEFT, RIGHT};
         public static enum StickDirection {X, Y};
@@ -111,6 +112,7 @@ public final class Constants {
         public static final class Manipulator {        
             public static final int kPort = 2;
 
+            // Button-index mapping for convenience
             public static final int X = 1;
             public static final int A = 2;
             public static final int B = 3;

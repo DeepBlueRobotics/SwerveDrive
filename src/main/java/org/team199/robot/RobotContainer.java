@@ -60,6 +60,9 @@ public class RobotContainer {
                                  () -> getStickValue(Constants.OI.StickType.RIGHT, Constants.OI.StickDirection.X)));
   }
 
+  /**
+   * Configures buttons on the Left Joystick.
+   */
   private void configureButtonBindingsLeftJoy() {
     homeAbsolute = new JoystickButton(leftJoy, Constants.OI.LeftJoy.homeAbsolute);
     homeAbsolute.whenPressed(new HomeAbsolute(drivetrain));
@@ -70,9 +73,15 @@ public class RobotContainer {
     }));
   }
 
+  /**
+   * Configures buttons on the Right Joystick.
+   */
   private void configureButtonBindingsRightJoy() {
   }
 
+  /**
+   * Configures buttons on the Gamepad.
+   */
   private void configureButtonBindingsGamepad() {
     homeAbsolute = new JoystickButton(gamepad, Constants.OI.Manipulator.homeAbsolute);
     homeAbsolute.whenPressed(new HomeAbsolute(drivetrain));
@@ -89,6 +98,12 @@ public class RobotContainer {
     System.out.println(gamepad.getRawButtonPressed(Constants.OI.Manipulator.homeAbsolute));
   }*/
 
+  /**
+   * Get the stick value of a joystick given its stick type (left side or right side) and its axis (X or Y).
+   * @param stick   The stick type of the joystick, either LEFT for left joystick or RIGHT for right joystick.
+   * @param dir     The direction, or axis, of the joystick, either X for the x-axis or Y for the y-axis.
+   * @return A double representing how far the joystick has been pushed, between -1.0 (all the way backwards) to 1.0 (all the way forwards).
+   */
   public double getStickValue(Constants.OI.StickType stick, Constants.OI.StickDirection dir) {
     switch (Constants.OI.CONTROL_TYPE) {
       case JOYSTICKS:

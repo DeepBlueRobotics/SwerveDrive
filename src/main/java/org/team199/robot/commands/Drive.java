@@ -8,7 +8,7 @@ import org.team199.robot.subsystems.Drivetrain;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 
 /**
- * The default command to be run on the Drivetrain subsystem. Drives the robot using joysticks.
+ * The default command to be run on the Drivetrain subsystem. Drives the robot using joysticks or gamepad.
  */
 public class Drive extends CommandBase {
     private Drivetrain drivetrain;
@@ -31,8 +31,10 @@ public class Drive extends CommandBase {
     public void execute() {
         double forward, strafe, rotateClockwise;
 
+        // Sets all values less than or equal to a very small value (determined by the idle joystick state) to zero.
+        // Used to make sure that the robot does not try to change its angle unless it is moving,
         if (Math.abs(fwd.get()) <= Constants.OI.JOY_THRESH) forward = 0.0;
-        else forward = Constants.DriveConstants.maxForward * fwd.get();     // Left joy Y is inverted.
+        else forward = Constants.DriveConstants.maxForward * fwd.get();
         if (Math.abs(str.get()) <= Constants.OI.JOY_THRESH) strafe = 0.0;
         else strafe = Constants.DriveConstants.maxStrafe * str.get();
         if (Math.abs(rcw.get()) <= Constants.OI.JOY_THRESH) rotateClockwise = 0.0;

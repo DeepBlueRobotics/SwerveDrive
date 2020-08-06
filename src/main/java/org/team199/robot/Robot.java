@@ -27,6 +27,7 @@ public class Robot extends TimedRobot {
   public void robotInit() {
     SmartDashboard.putBoolean("Field Oriented", true);
     robotContainer = new RobotContainer();
+    // Ensure that HomeAbsolute is called on startup.
     CommandScheduler.getInstance().schedule(new HomeAbsolute(robotContainer.drivetrain));
   }
 
