@@ -95,7 +95,7 @@ public class RobotContainer {
    * @param dir     The direction, or axis, of the joystick, either X for the x-axis or Y for the y-axis.
    * @return A double representing how far the joystick has been pushed, between -1.0 (all the way backwards) to 1.0 (all the way forwards).
    */
-  public double getStickValue(Constants.OI.StickType stick, Constants.OI.StickDirection dir) {
+  private double getStickValue(Constants.OI.StickType stick, Constants.OI.StickDirection dir) {
     switch (Constants.OI.CONTROL_TYPE) {
       case JOYSTICKS:
         if (stick == Constants.OI.StickType.LEFT && dir == Constants.OI.StickDirection.X) return leftJoy.getX();

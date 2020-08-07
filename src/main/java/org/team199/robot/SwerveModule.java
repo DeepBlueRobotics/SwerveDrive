@@ -73,7 +73,7 @@ public class SwerveModule {
         this.maxAnalog = maxAnalog;
         expectedSpeed = 0.0;
 
-        changeSelectedSensor(FeedbackDevice.QuadEncoder);
+        turn.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder);
     }
 
     /**
@@ -84,7 +84,7 @@ public class SwerveModule {
     public void move(double normalizedSpeed, double angle) {
         double setpoints[] = SwerveMath.computeSetpoints(normalizedSpeed / maxSpeed,
                                                          -angle / (2 * Math.PI),
-                                                         getSensorPosition(),
+                                                         turn.getSelectedSensorPosition(0),
                                                          gearRatio);
         setSpeed(setpoints[0]);
         if(setpoints[0] != 0.0) setAngle(setpoints[1]);
@@ -133,83 +133,12 @@ public class SwerveModule {
         turn.config_kD(0, kD);
     }
 
-    /**
-     * Sets the value of the driveModifier variable.
-     * @param modifier      The new value of the driveModifier.
-     */
-    public void setDriveModifier(double modifier) {
-        driveModifier = modifier;
-    }
-
-    /**
-     * Sets the value of the reversed variable.
-     * @param reversed      The new value of reversed.
-     */
-    public void setReversed(boolean reversed) {
-        this.reversed = reversed;
-    }
-
-    /**
-     * Sets the value of the maxSpeed variable.
-     * @param maxSpeed      The new value of maxSpeed.
-     */
-    public void setMaxSpeed(double maxSpeed) {
-        this.maxSpeed = maxSpeed;
-    }
-
-    /** 
-     * Returns the position of the quadrature encoder for the turn motor controller.
-     * @return The position of the quadrature encoder.
-     */
-    public int getQuadraturePosition() { return turn.getSensorCollection().getQuadraturePosition(); }
-
-    /** 
-     * Returns the velocity of the quadrature encoder for the turn motor controller.
-     * @return The velocity of the quadrature encoder.
-     */
-    public int getQuadratureVelocity() { return turn.getSensorCollection().getQuadratureVelocity(); }
-
-    /** 
-     * Returns the position of the analog encoder for the turn motor controller.
-     * @return The position of the analog encoder.
-     */
-    public int getAnalogPosition() { return turn.getSensorCollection().getAnalogIn(); }
-
-    /** 
-     * Returns the position of the analog encoder for the turn motor controller.
-     * @return The raw position of the analog encoder.
-     */
-    public int getAnalogPositionRaw() { return turn.getSensorCollection().getAnalogInRaw(); }
-
     /** 
      * Returns the angle of the turn motor controller relative to TURN_ZERO.
      * @return The angle, in radians, of the swerve module.
     */
     public double getModuleAngle(double gearRatio) {
-        return 2 * Math.PI * (getSensorPosition() / gearRatio) % 1;
-    }
-
-    /**
-     * @return The value of the currently selected sensor.
-     */
-    public int getSensorPosition() {
-        return turn.getSelectedSensorPosition(0);
-    }
-
-    /**
-     * Sets the position of the currently selected sensor to a desired value.
-     * @param pos   The position to set the selected sensor's position to.
-     */
-    public void setSensorPosition(int pos) { 
-        turn.setSelectedSensorPosition(pos);
-    }
-
-    /**
-     * Changes the currently selected sensor.
-     * @param sensor      The desired sensor type.
-     */
-    public void changeSelectedSensor(FeedbackDevice sensor) { 
-        turn.configSelectedFeedbackSensor(sensor); 
+        return 2 * Math.PI * (turn.getSelectedSensorPosition(0) / gearRatio) % 1;
     }
 
     /**
@@ -227,11 +156,11 @@ public class SwerveModule {
         // Display the angle that the module is trying to reach.
         SmartDashboard.putNumber(moduleString + " Target Angle", targetAngle);
         // Display the position of the quadrature encoder.
-        SmartDashboard.putNumber(moduleString + " Quadrature Position", getQuadraturePosition());
+        SmartDashboard.putNumber(moduleString + " Quadrature Position", turn.getSensorCollection().getQuadraturePosition());
         // Display the position of the analog encoder.
-        SmartDashboard.putNumber(moduleString + " Analog Position", getAnalogPosition());
+        SmartDashboard.putNumber(moduleString + " Analog Position", turn.getSensorCollection().getAnalogIn());
         // Display the raw position of the analog encoder.
-        SmartDashboard.putNumber(moduleString + " Raw Analog Position", getAnalogPositionRaw());
+        SmartDashboard.putNumber(moduleString + " Raw Analog Position", turn.getSensorCollection().getAnalogInRaw());
         // Display the module angle as calculated using the absolute encoder.
         SmartDashboard.putNumber(moduleString + " Module Angle", getModuleAngle(gearRatio));
     }
@@ -243,15 +172,15 @@ public class SwerveModule {
     public void homeAbsolute() {
         // The quadrature encoders are for turning the steer motor.
         // The analog encoders are for checking if the motors are in the right position.
-        changeSelectedSensor(FeedbackDevice.QuadEncoder);
+        turn.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder);
 
         // Change the current quadrature encoder position to the difference between the zeroed position and the current position, as measured by the analog encoder.
         // Difference is in analog encoder degrees which must be converted to quadrature encoder ticks.
         // Max value of the analog encoder is MAX_ANALOG, min value is 0.
-        int quadPos = (int) (Math.abs(gearRatio) / maxAnalog) *  (getAnalogPositionRaw() - turnZero);
+        int quadPos = (int) (Math.abs(gearRatio) / maxAnalog) *  (turn.getSensorCollection().getAnalogInRaw() - turnZero);
         
         // Set the orientation of the modules to what they would be relative to TURN_ZERO.
-        setSensorPosition(quadPos);
+        turn.setSelectedSensorPosition(quadPos);
 
         // Make sure we actually turn to the correct position.
         setAngle(0.0);

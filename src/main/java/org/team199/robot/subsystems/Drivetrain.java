@@ -51,10 +51,10 @@ public class Drivetrain extends SubsystemBase {
   private final boolean isGyroReversed = true;
 
   // SwerveModules for each "side" of the robot.
-  public SwerveModule modules[];
+  private SwerveModule modules[];
 
   // Odometry equivalent for non-WPILib implementation
-  public Pose2d pose;
+  private Pose2d pose;
   private double gyroOffset;
 
   /**
