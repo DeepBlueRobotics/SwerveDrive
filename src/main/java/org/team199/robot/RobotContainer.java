@@ -22,7 +22,7 @@ public class RobotContainer {
   private Joystick rightJoy;
   private Joystick gamepad;
 
-  public final Drivetrain drivetrain = new Drivetrain(Drivetrain.SwerveImplementation.WPILib);
+  public final Drivetrain drivetrain = new Drivetrain();
 
   public RobotContainer() {
     switch (Constants.OI.CONTROL_TYPE) {
