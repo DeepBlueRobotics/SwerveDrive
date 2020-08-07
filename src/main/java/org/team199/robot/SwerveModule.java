@@ -62,11 +62,11 @@ public class SwerveModule {
 
         this.drive = drive;
         this.drive.setSensorPhase(true);
-        catchError(() -> this.drive.configAllowableClosedloopError(0, 4));
+        catchError(this.drive.configAllowableClosedloopError(0, 4));
 
         this.turn = turn;
         this.turn.setSensorPhase(true);
-        catchError(() -> this.turn.configAllowableClosedloopError(0, 4));
+        catchError(this.turn.configAllowableClosedloopError(0, 4));
 
         this.gearRatio = gearRatio;
         this.driveModifier = driveModifier;
@@ -76,7 +76,7 @@ public class SwerveModule {
         this.maxAnalog = maxAnalog;
         expectedSpeed = 0.0;
 
-        catchError(() -> turn.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder));
+        catchError(turn.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder));
     }
 
     /**
@@ -97,7 +97,7 @@ public class SwerveModule {
      * Sets the speed for the drive motor controller.
      * @param speed     The desired speed, from -1.0 (maximum speed directed backwards) to 1.0 (maximum speed directed forwards).
      */
-    public void setSpeed(double speed) {
+    private void setSpeed(double speed) {
         // There are no encoders on the drive motor controllers so assume current speed = expected speed
         expectedSpeed = maxSpeed * speed * driveModifier;
         drive.set(ControlMode.PercentOutput, speed * driveModifier);
@@ -107,7 +107,7 @@ public class SwerveModule {
      * Sets the angle for the turn motor controller.
      * @param angle     The desired angle, between -0.5 (180 degrees counterclockwise) and 0.5 (180 degrees clockwise).
      */
-    public void setAngle(double angle) {
+    private void setAngle(double angle) {
         targetAngle = (reversed ? -1 : 1) * angle * gearRatio;
         turn.set(ControlMode.Position, targetAngle);
     }
@@ -119,9 +119,9 @@ public class SwerveModule {
      * @param kD        The proportionality constant for the "D" (derivative) term.
      */
     public void setDrivePID(double kP, double kI, double kD) {
-        catchError(() -> drive.config_kP(0, kP));
-        catchError(() -> drive.config_kI(0, kI));
-        catchError(() -> drive.config_kD(0, kD));
+        catchError(drive.config_kP(0, kP));
+        catchError(drive.config_kI(0, kI));
+        catchError(drive.config_kD(0, kD));
     }
 
     /**
@@ -131,16 +131,16 @@ public class SwerveModule {
      * @param kD        The proportionality constant for the "D" (derivative) term.
      */
     public void setTurnPID(double kP, double kI, double kD) {
-        catchError(() -> turn.config_kP(0, kP));
-        catchError(() -> turn.config_kI(0, kI));
-        catchError(() -> turn.config_kD(0, kD));
+        catchError(turn.config_kP(0, kP));
+        catchError(turn.config_kI(0, kI));
+        catchError(turn.config_kD(0, kD));
     }
 
     /** 
      * Returns the angle of the turn motor controller relative to TURN_ZERO.
      * @return The angle, in radians, of the swerve module.
     */
-    public double getModuleAngle(double gearRatio) {
+    private double getModuleAngle(double gearRatio) {
         return 2 * Math.PI * (turn.getSelectedSensorPosition(0) / gearRatio) % 1;
     }
 
@@ -175,7 +175,7 @@ public class SwerveModule {
     public void homeAbsolute() {
         // The quadrature encoders are for turning the steer motor.
         // The analog encoders are for checking if the motors are in the right position.
-        catchError(() -> turn.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder));
+        catchError(turn.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder));
 
         // Change the current quadrature encoder position to the difference between the zeroed position and the current position, as measured by the analog encoder.
         // Difference is in analog encoder degrees which must be converted to quadrature encoder ticks.
@@ -183,18 +183,13 @@ public class SwerveModule {
         int quadPos = (int) (Math.abs(gearRatio) / maxAnalog) *  (turn.getSensorCollection().getAnalogInRaw() - turnZero);
         
         // Set the orientation of the modules to what they would be relative to TURN_ZERO.
-        catchError(() -> turn.setSelectedSensorPosition(quadPos));
+        catchError(turn.setSelectedSensorPosition(quadPos));
 
         // Make sure we actually turn to the correct position.
         setAngle(0.0);
     }
-
-    /**
-     * Function wrapper that prints an error whenever a method that returns an error code sends an unacceptable error code.
-     * @param method        Lambda expression for the function you want to wrap around.
-     */
-    private void catchError(Supplier<ErrorCode> method) {
-        ErrorCode e = method.get();
+    
+    private void catchError(ErrorCode e) {
         if (e != ErrorCode.OK) {
             System.err.println("Received error code #" + e.value + " for module " + moduleString + " at line " + Thread.currentThread().getStackTrace()[2].getLineNumber() + ".");
         }
