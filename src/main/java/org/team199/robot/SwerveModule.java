@@ -1,5 +1,8 @@
 package org.team199.robot;
 
+import java.util.function.Supplier;
+
+import com.ctre.phoenix.ErrorCode;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
@@ -59,11 +62,11 @@ public class SwerveModule {
 
         this.drive = drive;
         this.drive.setSensorPhase(true);
-        this.drive.configAllowableClosedloopError(0, 4);
+        catchError(() -> this.drive.configAllowableClosedloopError(0, 4));
 
         this.turn = turn;
         this.turn.setSensorPhase(true);
-        this.turn.configAllowableClosedloopError(0, 4);
+        catchError(() -> this.turn.configAllowableClosedloopError(0, 4));
 
         this.gearRatio = gearRatio;
         this.driveModifier = driveModifier;
@@ -73,7 +76,7 @@ public class SwerveModule {
         this.maxAnalog = maxAnalog;
         expectedSpeed = 0.0;
 
-        turn.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder);
+        catchError(() -> turn.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder));
     }
 
     /**
@@ -116,9 +119,9 @@ public class SwerveModule {
      * @param kD        The proportionality constant for the "D" (derivative) term.
      */
     public void setDrivePID(double kP, double kI, double kD) {
-        drive.config_kP(0, kP);
-        drive.config_kI(0, kI);
-        drive.config_kD(0, kD);
+        catchError(() -> drive.config_kP(0, kP));
+        catchError(() -> drive.config_kI(0, kI));
+        catchError(() -> drive.config_kD(0, kD));
     }
 
     /**
@@ -128,9 +131,9 @@ public class SwerveModule {
      * @param kD        The proportionality constant for the "D" (derivative) term.
      */
     public void setTurnPID(double kP, double kI, double kD) {
-        turn.config_kP(0, kP);
-        turn.config_kI(0, kI);
-        turn.config_kD(0, kD);
+        catchError(() -> turn.config_kP(0, kP));
+        catchError(() -> turn.config_kI(0, kI));
+        catchError(() -> turn.config_kD(0, kD));
     }
 
     /** 
@@ -172,7 +175,7 @@ public class SwerveModule {
     public void homeAbsolute() {
         // The quadrature encoders are for turning the steer motor.
         // The analog encoders are for checking if the motors are in the right position.
-        turn.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder);
+        catchError(() -> turn.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder));
 
         // Change the current quadrature encoder position to the difference between the zeroed position and the current position, as measured by the analog encoder.
         // Difference is in analog encoder degrees which must be converted to quadrature encoder ticks.
@@ -180,9 +183,20 @@ public class SwerveModule {
         int quadPos = (int) (Math.abs(gearRatio) / maxAnalog) *  (turn.getSensorCollection().getAnalogInRaw() - turnZero);
         
         // Set the orientation of the modules to what they would be relative to TURN_ZERO.
-        turn.setSelectedSensorPosition(quadPos);
+        catchError(() -> turn.setSelectedSensorPosition(quadPos));
 
         // Make sure we actually turn to the correct position.
         setAngle(0.0);
+    }
+
+    /**
+     * Function wrapper that prints an error whenever a method that returns an error code sends an unacceptable error code.
+     * @param method        Lambda expression for the function you want to wrap around.
+     */
+    private void catchError(Supplier<ErrorCode> method) {
+        ErrorCode e = method.get();
+        if (e != ErrorCode.OK) {
+            System.err.println("Received error code #" + e.value + " for module " + moduleString + " at line " + Thread.currentThread().getStackTrace()[2].getLineNumber() + ".");
+        }
     }
 }
