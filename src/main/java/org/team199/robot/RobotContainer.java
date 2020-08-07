@@ -55,9 +55,9 @@ public class RobotContainer {
     }
 
     drivetrain.setDefaultCommand(new Drive(drivetrain, 
-                                 () -> getStickValue(Constants.OI.StickType.LEFT, Constants.OI.StickDirection.Y),
-                                 () -> getStickValue(Constants.OI.StickType.LEFT, Constants.OI.StickDirection.X),
-                                 () -> getStickValue(Constants.OI.StickType.RIGHT, Constants.OI.StickDirection.X)));
+                                 () -> signedSquare(getStickValue(Constants.OI.StickType.LEFT, Constants.OI.StickDirection.Y)),
+                                 () -> signedSquare(getStickValue(Constants.OI.StickType.LEFT, Constants.OI.StickDirection.X)),
+                                 () -> signedSquare(getStickValue(Constants.OI.StickType.RIGHT, Constants.OI.StickDirection.X))));
   }
 
   /**
@@ -118,6 +118,10 @@ public class RobotContainer {
         if (stick == Constants.OI.StickType.RIGHT && dir == Constants.OI.StickDirection.Y) return -gamepad.getRawAxis(3);
       default: return 0;
     }
+  }
+
+  private double signedSquare(double value){
+    return value * Math.abs(value);
   }
 
 }
