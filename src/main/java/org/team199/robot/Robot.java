@@ -25,6 +25,7 @@ public class Robot extends TimedRobot {
   // This function is run when the robot is first started up and should be used for any initialization code.
   @Override
   public void robotInit() {
+    System.err.println("In robotInit.");
     SmartDashboard.putBoolean("Field Oriented", true);
     robotContainer = new RobotContainer();
     // Ensure that HomeAbsolute is called on startup.

@@ -20,8 +20,6 @@ public abstract class BaseDrivetrain extends SubsystemBase {
      * Constructs a BaseDrivetrain object
     */
     public BaseDrivetrain() {
-        gyro.reset();
-
         // Initialize SwerveModules
         // Forward-Left
         SwerveModule moduleFL = new SwerveModule(SwerveModule.ModuleType.FL,
@@ -80,6 +78,8 @@ public abstract class BaseDrivetrain extends SubsystemBase {
      * Runs homeAbsolute for all of the swerve modules.
      */
     public void homeAbsolute() {
+        gyro.reset();
+
         for (int i = 0; i < 4; i++) {
             modules[i].homeAbsolute();
         }

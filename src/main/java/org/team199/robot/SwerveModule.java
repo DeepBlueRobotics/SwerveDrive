@@ -180,7 +180,7 @@ public class SwerveModule {
         // Change the current quadrature encoder position to the difference between the zeroed position and the current position, as measured by the analog encoder.
         // Difference is in analog encoder degrees which must be converted to quadrature encoder ticks.
         // Max value of the analog encoder is MAX_ANALOG, min value is 0.
-        int quadPos = (int) (Math.abs(gearRatio) / maxAnalog) *  (turn.getSensorCollection().getAnalogInRaw() - turnZero);
+        int quadPos = (int) ((Math.abs(gearRatio) / maxAnalog) *  (turn.getSensorCollection().getAnalogInRaw() - turnZero));
         
         // Set the orientation of the modules to what they would be relative to TURN_ZERO.
         catchError(turn.setSelectedSensorPosition(quadPos));
