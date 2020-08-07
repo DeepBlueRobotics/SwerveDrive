@@ -39,6 +39,7 @@ public class Drivetrain extends BaseDrivetrain {
     odometry = new SwerveDriveOdometry(kinematics, new Rotation2d(getHeading()));
   }
 
+  @Override
   protected void updateOdometry() {
     SwerveModuleState states[] =  new SwerveModuleState[4];
     for (int i = 0; i < 4; i++) {
@@ -47,6 +48,7 @@ public class Drivetrain extends BaseDrivetrain {
     odometry.update(Rotation2d.fromDegrees(getHeading()), states);
   }
 
+  @Override
   protected void updateSmartDashboard() {
     // Display the status of the odometry.
     SmartDashboard.putNumber("Pose X", odometry.getPoseMeters().getTranslation().getX());
@@ -58,6 +60,7 @@ public class Drivetrain extends BaseDrivetrain {
     }
    }
 
+  @Override
   public void drive(double forward, double strafe, double rotation) {
     SwerveModuleState[] moduleStates = getSwerveStates(forward, strafe, rotation);
     SwerveDriveKinematics.normalizeWheelSpeeds(moduleStates, Constants.DriveConstants.maxSpeed);

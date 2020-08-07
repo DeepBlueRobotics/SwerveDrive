@@ -25,6 +25,7 @@ public class CustomDrivetrain extends BaseDrivetrain {
     gyroOffset = pose.getRotation().minus(rot).getRadians();
   }
 
+  @Override
   protected void updateOdometry() {
     SwerveModuleState states[] =  new SwerveModuleState[4];
     for (int i = 0; i < 4; i++) {
@@ -56,7 +57,8 @@ public class CustomDrivetrain extends BaseDrivetrain {
     pose = new Pose2d(newPose.getTranslation(), new Rotation2d(getHeading() + gyroOffset));
   }
 
-  public void updateSmartDashboard() {
+  @Override
+  protected void updateSmartDashboard() {
       // Display the status of the odometry.
     SmartDashboard.putNumber("Pose X", pose.getTranslation().getX());
     SmartDashboard.putNumber("Pose Y", pose.getTranslation().getY());
@@ -67,6 +69,7 @@ public class CustomDrivetrain extends BaseDrivetrain {
     }
   }
 
+  @Override
   public void drive(double forward, double strafe, double rotation) {
     SwerveModuleState[] moduleStates;
     if (SmartDashboard.getBoolean("Field Oriented", true)) {
