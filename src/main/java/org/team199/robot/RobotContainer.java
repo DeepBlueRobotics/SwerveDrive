@@ -21,7 +21,6 @@ public class RobotContainer {
   private Joystick leftJoy;
   private Joystick rightJoy;
   private Joystick gamepad;
-  private JoystickButton homeAbsolute;
 
   public final Drivetrain drivetrain = new Drivetrain(Drivetrain.SwerveImplementation.WPILib);
 
@@ -64,8 +63,7 @@ public class RobotContainer {
    * Configures buttons on the Left Joystick.
    */
   private void configureButtonBindingsLeftJoy() {
-    homeAbsolute = new JoystickButton(leftJoy, Constants.OI.LeftJoy.homeAbsolute);
-    homeAbsolute.whenPressed(new HomeAbsolute(drivetrain));
+    new JoystickButton(leftJoy, Constants.OI.LeftJoy.homeAbsolute).whenPressed(new HomeAbsolute(drivetrain));
 
     // Toggle whether or not we are in field oriented mode.
     new JoystickButton(leftJoy, Constants.OI.LeftJoy.fieldOrientedToggle).whenPressed(new InstantCommand(() -> {
@@ -83,20 +81,13 @@ public class RobotContainer {
    * Configures buttons on the Gamepad.
    */
   private void configureButtonBindingsGamepad() {
-    homeAbsolute = new JoystickButton(gamepad, Constants.OI.Manipulator.homeAbsolute);
-    homeAbsolute.whenPressed(new HomeAbsolute(drivetrain));
-
-    System.out.println("Buttons be ok.");
+    new JoystickButton(gamepad, Constants.OI.Manipulator.homeAbsolute).whenPressed(new HomeAbsolute(drivetrain));
 
     // Toggle whether or not we are in field oriented mode.
     new JoystickButton(gamepad, Constants.OI.Manipulator.fieldOrientedToggle).whenPressed(new InstantCommand(() -> {
       SmartDashboard.putBoolean("Field Oriented", !SmartDashboard.getBoolean("Field Oriented", true));
     }));
   }
-
-  /*public void homeAbsolutePressed() {
-    System.out.println(gamepad.getRawButtonPressed(Constants.OI.Manipulator.homeAbsolute));
-  }*/
 
   /**
    * Get the stick value of a joystick given its stick type (left side or right side) and its axis (X or Y).
@@ -120,6 +111,11 @@ public class RobotContainer {
     }
   }
 
+  /**
+   * Squares a value and preserves its sign.
+   * @param value     The value to be squared.
+   * @return The signed squared value.
+   */
   private double signedSquare(double value){
     return value * Math.abs(value);
   }

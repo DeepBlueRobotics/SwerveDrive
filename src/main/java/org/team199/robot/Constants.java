@@ -71,7 +71,7 @@ public final class Constants {
         // Analog encoder positions for each motor controller associated with all motor controllers facing forward.
         // All motors will be facing in the same direction toward the front of the robot.
         // Increasing the analog encoder is counter-clockwise, decreasing is clockwise.
-        public static final double TURN_ZERO[] = {758.0, 807.0, 406.0, 169.0};
+        public static final int TURN_ZERO[] = {758, 807, 406, 169};
 
         // The actual analog encoder maxmimum positions, since 5V is not supplied to each of the analog encoders.
         public static final int MAX_ANALOG[] = {886, 882, 877, 880};

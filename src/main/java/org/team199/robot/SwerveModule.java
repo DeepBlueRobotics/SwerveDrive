@@ -19,13 +19,10 @@ public class SwerveModule {
 
     private ModuleType type;
     private String moduleString;
-    private WPI_TalonSRX drive;
-    private WPI_TalonSRX turn;
-    private double gearRatio;
-    public double targetAngle;
-    private double expectedSpeed;
-    private double driveModifier;
-    private double maxSpeed;
+    private WPI_TalonSRX drive, turn;
+    private double gearRatio, driveModifier, maxSpeed;
+    private double targetAngle, expectedSpeed;
+    private int turnZero, maxAnalog;
     private boolean reversed;
 
     /**
@@ -38,9 +35,11 @@ public class SwerveModule {
      * @param driveModifier     A double which controls the speed passed into drive.setSpeed()
      * @param maxSpeed          The maximum speed, in m/s, of the SwerveModule. This should be the same speed when normalizing.
      * @param reversed          Whether or not to reverse the turn motor controller.
+     * @param turnZero          The desired raw analog encoder value to reach during HomeAbsolute.
+     * @param maxAnalog         The maximum value of the raw analog encoder.
      */
     public SwerveModule(ModuleType type, WPI_TalonSRX drive, WPI_TalonSRX turn, double gearRatio, double driveModifier,
-                        double maxSpeed, boolean reversed) {
+                        double maxSpeed, boolean reversed, int turnZero, int maxAnalog) {
         this.type = type;
 
         switch (type) {
@@ -61,14 +60,19 @@ public class SwerveModule {
         this.drive = drive;
         this.drive.setSensorPhase(true);
         this.drive.configAllowableClosedloopError(0, 4);
+
         this.turn = turn;
         this.turn.setSensorPhase(true);
         this.turn.configAllowableClosedloopError(0, 4);
+
         this.gearRatio = gearRatio;
         this.driveModifier = driveModifier;
         this.maxSpeed = maxSpeed;
         this.reversed = reversed;
+        this.turnZero = turnZero;
+        this.maxAnalog = maxAnalog;
         expectedSpeed = 0.0;
+
         changeSelectedSensor(FeedbackDevice.QuadEncoder);
     }
 
@@ -82,7 +86,6 @@ public class SwerveModule {
                                                          -angle / (2 * Math.PI),
                                                          getSensorPosition(),
                                                          gearRatio);
-        System.out.println("Move Values: " + setpoints[0] + ", " + setpoints[1]);
         setSpeed(setpoints[0]);
         if(setpoints[0] != 0.0) setAngle(setpoints[1]);
     }
@@ -231,5 +234,26 @@ public class SwerveModule {
         SmartDashboard.putNumber(moduleString + " Raw Analog Position", getAnalogPositionRaw());
         // Display the module angle as calculated using the absolute encoder.
         SmartDashboard.putNumber(moduleString + " Module Angle", getModuleAngle(gearRatio));
+    }
+
+    /**
+     * HomeAbsolute is an instant command that ensures that each of the turn motor controllers are in a known configuration,
+     * as dictated by the absolute encoder positions turnZero.
+     */
+    public void homeAbsolute() {
+        // The quadrature encoders are for turning the steer motor.
+        // The analog encoders are for checking if the motors are in the right position.
+        changeSelectedSensor(FeedbackDevice.QuadEncoder);
+
+        // Change the current quadrature encoder position to the difference between the zeroed position and the current position, as measured by the analog encoder.
+        // Difference is in analog encoder degrees which must be converted to quadrature encoder ticks.
+        // Max value of the analog encoder is MAX_ANALOG, min value is 0.
+        int quadPos = (int) (Math.abs(gearRatio) / maxAnalog) *  (getAnalogPositionRaw() - turnZero);
+        
+        // Set the orientation of the modules to what they would be relative to TURN_ZERO.
+        setSensorPosition(quadPos);
+
+        // Make sure we actually turn to the correct position.
+        setAngle(0.0);
     }
 }

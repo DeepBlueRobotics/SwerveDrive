@@ -11,7 +11,6 @@ import org.team199.lib.MotorControllerFactory;
 import org.team199.lib.SwerveMath;
 import org.team199.robot.Constants;
 import org.team199.robot.SwerveModule;
-
 import com.kauailabs.navx.frc.AHRS;
 
 import edu.wpi.first.wpilibj.SerialPort;
@@ -69,26 +68,34 @@ public class Drivetrain extends SubsystemBase {
     double heading = Math.toRadians(getHeading());
 
     // Initialize SwerveModules
+    // Forward-Left
     SwerveModule moduleFL = new SwerveModule(SwerveModule.ModuleType.FL,
                                 MotorControllerFactory.createTalon(Constants.Ports.kDriveFrontLeft), 
                                 MotorControllerFactory.createTalon(Constants.Ports.kTurnFrontLeft), 
-                                Constants.DriveConstants.GEAR_RATIO[0], -Constants.DriveConstants.kDriveModifier,
-                                Constants.DriveConstants.maxSpeed, Constants.DriveConstants.reversed[0]);
+                                Constants.DriveConstants.GEAR_RATIO[0], -Constants.DriveConstants.kDriveModifier, 
+                                Constants.DriveConstants.maxSpeed, Constants.DriveConstants.reversed[0],
+                                Constants.DriveConstants.TURN_ZERO[0], Constants.DriveConstants.MAX_ANALOG[0]);
+    // Forward-Right
     SwerveModule moduleFR = new SwerveModule(SwerveModule.ModuleType.FR,
                                 MotorControllerFactory.createTalon(Constants.Ports.kDriveFrontRight), 
                                 MotorControllerFactory.createTalon(Constants.Ports.kTurnFrontRight), 
                                 Constants.DriveConstants.GEAR_RATIO[1], Constants.DriveConstants.kDriveModifier,
-                                Constants.DriveConstants.maxSpeed, Constants.DriveConstants.reversed[1]);
+                                Constants.DriveConstants.maxSpeed, Constants.DriveConstants.reversed[1],
+                                Constants.DriveConstants.TURN_ZERO[1], Constants.DriveConstants.MAX_ANALOG[1]);
+    // Backward-Left
     SwerveModule moduleBL = new SwerveModule(SwerveModule.ModuleType.BL,
                                 MotorControllerFactory.createTalon(Constants.Ports.kDriveBackLeft), 
                                 MotorControllerFactory.createTalon(Constants.Ports.kTurnBackLeft), 
                                 Constants.DriveConstants.GEAR_RATIO[2], -Constants.DriveConstants.kDriveModifier,
-                                Constants.DriveConstants.maxSpeed, Constants.DriveConstants.reversed[2]);
+                                Constants.DriveConstants.maxSpeed, Constants.DriveConstants.reversed[2],
+                                Constants.DriveConstants.TURN_ZERO[2], Constants.DriveConstants.MAX_ANALOG[2]);
+    // Backward-Right
     SwerveModule moduleBR = new SwerveModule(SwerveModule.ModuleType.BR,
                                 MotorControllerFactory.createTalon(Constants.Ports.kDriveBackRight), 
                                 MotorControllerFactory.createTalon(Constants.Ports.kTurnBackRight), 
                                 Constants.DriveConstants.GEAR_RATIO[3], Constants.DriveConstants.kDriveModifier,
-                                Constants.DriveConstants.maxSpeed, Constants.DriveConstants.reversed[3]);
+                                Constants.DriveConstants.maxSpeed, Constants.DriveConstants.reversed[3],
+                                Constants.DriveConstants.TURN_ZERO[3], Constants.DriveConstants.MAX_ANALOG[3]);
     modules = new SwerveModule[]{moduleFL, moduleFR, moduleBL, moduleBR};
 
     // Configure PID control constants for drive motor controllers
@@ -195,7 +202,6 @@ FIRST Robotics Competition </a> by Tyler Veness for more information.
    * @param rotation  Desired rotation speed (in rad/s).
    */
   public void drive(double forward, double strafe, double rotation) {
-    System.out.println(forward + ", " + strafe + ", " + rotation);
     SwerveModuleState[] moduleStates;
     if (implementation == SwerveImplementation.WPILib) {
       moduleStates = getSwerveStates(forward, strafe, rotation);
@@ -210,12 +216,16 @@ FIRST Robotics Competition </a> by Tyler Veness for more information.
     }
 
     SwerveDriveKinematics.normalizeWheelSpeeds(moduleStates, Constants.DriveConstants.maxSpeed);
-    SmartDashboard.putNumber("BL Swerve State Angle", moduleStates[2].angle.getRadians());
-    SmartDashboard.putNumber("BL Selected Sensor Position", modules[2].getSensorPosition());
 
     // Move the modules based on desired (normalized) speed, desired angle, max speed, drive modifier, and whether or not to reverse turning.
     for (int i = 0; i < 4; i++) {
       modules[i].move(moduleStates[i].speedMetersPerSecond, moduleStates[i].angle.getRadians());
+    }
+  }
+
+  public void homeAbsolute() {
+    for (int i = 0; i < 4; i++) {
+      modules[i].homeAbsolute();
     }
   }
 
