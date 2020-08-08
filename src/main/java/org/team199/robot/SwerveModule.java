@@ -7,9 +7,12 @@ import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 
 import org.team199.lib.SwerveMath;
 
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+
+import org.team199.robot.Constants;
 
 /**
  * A class that stores all the variables and methods applicaple to a single swerve module,
@@ -25,6 +28,7 @@ public class SwerveModule {
     private double targetAngle, expectedSpeed;
     private int turnZero, maxAnalog;
     private boolean reversed;
+    private Timer timer;
 
     /**
      * @param type    The type of the swerve module, either FL (Forward-Left), FR (Forward-Right), 
@@ -41,6 +45,9 @@ public class SwerveModule {
      */
     public SwerveModule(ModuleType type, WPI_TalonSRX drive, WPI_TalonSRX turn, double gearRatio, double driveModifier,
                         double maxSpeed, boolean reversed, int turnZero, int maxAnalog) {
+        this.timer = new Timer();
+        timer.start();
+
         this.type = type;
 
         switch (type) {
@@ -97,8 +104,15 @@ public class SwerveModule {
      */
     private void setSpeed(double speed) {
         // There are no encoders on the drive motor controllers so assume current speed = expected speed
-        expectedSpeed = maxSpeed * speed * Math.abs(driveModifier);
-        drive.set(ControlMode.PercentOutput, speed * driveModifier);
+        double deltaTime = timer.get();
+        double newExpectedSpeed = maxSpeed * speed * Math.abs(driveModifier);
+        double desiredAcceleration = (newExpectedSpeed - expectedSpeed) / deltaTime;
+        double maxAcceleration = Constants.DriveConstants.mu * 9.8;
+        double clippedAcceleration = Math.copySign(Math.min(Math.abs(desiredAcceleration), maxAcceleration), desiredAcceleration);
+        expectedSpeed += clippedAcceleration * deltaTime;
+        timer.reset();
+        timer.start();
+        drive.set(ControlMode.PercentOutput, Math.copySign(expectedSpeed, expectedSpeed * driveModifier) / maxSpeed);
     }
 
     /**

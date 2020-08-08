@@ -26,6 +26,8 @@ public final class Constants {
     }
 
     public static final class DriveConstants {
+        //mu for max accleration
+        public static final double mu = 0.1;
         // Original units are in inches and must be converted to meters.
         public static final double wheelBase = 18.15 * inchToMeter;
         public static final double trackWidth = 17.75 * inchToMeter;
