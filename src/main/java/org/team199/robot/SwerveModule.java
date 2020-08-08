@@ -97,7 +97,7 @@ public class SwerveModule {
      */
     private void setSpeed(double speed) {
         // There are no encoders on the drive motor controllers so assume current speed = expected speed
-        expectedSpeed = maxSpeed * speed * driveModifier;
+        expectedSpeed = maxSpeed * speed * Math.abs(driveModifier);
         drive.set(ControlMode.PercentOutput, speed * driveModifier);
     }
 
@@ -139,7 +139,7 @@ public class SwerveModule {
      * @return The angle, in radians, of the swerve module.
     */
     private double getModuleAngle() {
-        return 2 * Math.PI * ((turn.getSelectedSensorPosition(0) / gearRatio) % 1);
+        return 2 * Math.PI * ((turn.getSelectedSensorPosition(0) / Math.abs(gearRatio)) % 1);
     }
 
     /**
@@ -164,6 +164,8 @@ public class SwerveModule {
         SmartDashboard.putNumber(moduleString + " Raw Analog Position", turn.getSensorCollection().getAnalogInRaw());
         // Display the module angle as calculated using the absolute encoder.
         SmartDashboard.putNumber(moduleString + " Module Angle", getModuleAngle());
+        //expected SPEEEEEEEEEEEEEEEEEEEEEEEEEEEEED
+        SmartDashboard.putNumber(moduleString + " Expected Speed: ", expectedSpeed);
     }
 
     /**
