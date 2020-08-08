@@ -72,6 +72,7 @@ public class SwerveModule {
         this.reversed = reversed;
         this.turnZero = turnZero;
         this.maxAnalog = maxAnalog;
+
         expectedSpeed = 0.0;
 
         catchError(turn.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder));
@@ -97,8 +98,9 @@ public class SwerveModule {
      */
     private void setSpeed(double speed) {
         // There are no encoders on the drive motor controllers so assume current speed = expected speed
-        expectedSpeed = maxSpeed * speed * driveModifier;
         drive.set(ControlMode.PercentOutput, speed * driveModifier);
+        expectedSpeed = (Constants.DriveConstants.wheelDiameter / 2) * 
+            ((drive.getMotorOutputVoltage() - drive.getStatorCurrent() * Constants.DriveConstants.motorResistance) / Constants.DriveConstants.k);
     }
 
     /**

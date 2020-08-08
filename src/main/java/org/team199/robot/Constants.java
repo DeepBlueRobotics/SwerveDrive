@@ -26,6 +26,18 @@ public final class Constants {
     }
 
     public static final class DriveConstants {
+        // 5330 is the experimental free speed of a CIM motor controller in rev/s
+        // Convert rev/s to rad/s.
+        public static final double CIMFreeSpeed = 5330 * (2 * Math.PI);
+        // The gearing between the drive motor controller and the wheels.
+        public static final double driveGearing = 6.67;
+        public static final double wheelDiameter = 5.0 * inchToMeter;
+        // k is used in estimating the expected speed for odometry.
+        // k = Maximum Volts / Max Angular Velocity (of the wheel).
+        public static final double k = 12.0 / (CIMFreeSpeed / driveGearing);
+        // Free current of a CIM motor is 2.7 Amps at 12 Volts.
+        public static final double motorResistance = 12 / 2.7;
+
         // Original units are in inches and must be converted to meters.
         public static final double wheelBase = 18.15 * inchToMeter;
         public static final double trackWidth = 17.75 * inchToMeter;
