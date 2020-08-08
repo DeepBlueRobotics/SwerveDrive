@@ -37,9 +37,6 @@ public class Drivetrain extends BaseDrivetrain {
     Translation2d locationFR = new Translation2d(Constants.DriveConstants.wheelBase / 2, -Constants.DriveConstants.trackWidth / 2);
     Translation2d locationBL = new Translation2d(-Constants.DriveConstants.wheelBase / 2, Constants.DriveConstants.trackWidth / 2);
     Translation2d locationBR = new Translation2d(-Constants.DriveConstants.wheelBase / 2, -Constants.DriveConstants.trackWidth / 2);
-    
-    //resets gyro before odometry is declared
-    gyro.reset();
 
     kinematics = new SwerveDriveKinematics(locationFL, locationFR, locationBL, locationBR);
     odometry = new SwerveDriveOdometry(kinematics, new Rotation2d(getHeading()));
