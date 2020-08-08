@@ -1,7 +1,5 @@
 package org.team199.robot;
 
-import java.util.function.Supplier;
-
 import com.ctre.phoenix.ErrorCode;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
@@ -140,7 +138,7 @@ public class SwerveModule {
      * Returns the angle of the turn motor controller relative to TURN_ZERO.
      * @return The angle, in radians, of the swerve module.
     */
-    private double getModuleAngle(double gearRatio) {
+    private double getModuleAngle() {
         return 2 * Math.PI * (turn.getSelectedSensorPosition(0) / gearRatio) % 1;
     }
 
@@ -149,7 +147,7 @@ public class SwerveModule {
      * @return A SwerveModuleState object representing the speed and angle of the module.
      */
     public SwerveModuleState getCurrentState() {
-        return new SwerveModuleState(expectedSpeed, new Rotation2d(getModuleAngle(gearRatio)));
+        return new SwerveModuleState(expectedSpeed, new Rotation2d(getModuleAngle()));
     }
 
     /**
@@ -165,7 +163,7 @@ public class SwerveModule {
         // Display the raw position of the analog encoder.
         SmartDashboard.putNumber(moduleString + " Raw Analog Position", turn.getSensorCollection().getAnalogInRaw());
         // Display the module angle as calculated using the absolute encoder.
-        SmartDashboard.putNumber(moduleString + " Module Angle", getModuleAngle(gearRatio));
+        SmartDashboard.putNumber(moduleString + " Module Angle", getModuleAngle());
     }
 
     /**
@@ -180,7 +178,7 @@ public class SwerveModule {
         // Change the current quadrature encoder position to the difference between the zeroed position and the current position, as measured by the analog encoder.
         // Difference is in analog encoder degrees which must be converted to quadrature encoder ticks.
         // Max value of the analog encoder is MAX_ANALOG, min value is 0.
-        int quadPos = (int) ((Math.abs(gearRatio) / maxAnalog) *  (turn.getSensorCollection().getAnalogInRaw() - turnZero));
+        int quadPos = (int) ((Math.abs(gearRatio) / maxAnalog) * (turn.getSensorCollection().getAnalogInRaw() - turnZero));
         
         // Set the orientation of the modules to what they would be relative to TURN_ZERO.
         catchError(turn.setSelectedSensorPosition(quadPos));
