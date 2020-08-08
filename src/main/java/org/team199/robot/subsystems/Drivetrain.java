@@ -7,8 +7,11 @@
 
 package org.team199.robot.subsystems;
 
+import com.kauailabs.navx.frc.AHRS;
+
 import org.team199.robot.Constants;
 
+import edu.wpi.first.wpilibj.SerialPort;
 import edu.wpi.first.wpilibj.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.geometry.Translation2d;
 import edu.wpi.first.wpilibj.kinematics.ChassisSpeeds;
@@ -34,6 +37,9 @@ public class Drivetrain extends BaseDrivetrain {
     Translation2d locationFR = new Translation2d(Constants.DriveConstants.wheelBase / 2, -Constants.DriveConstants.trackWidth / 2);
     Translation2d locationBL = new Translation2d(-Constants.DriveConstants.wheelBase / 2, Constants.DriveConstants.trackWidth / 2);
     Translation2d locationBR = new Translation2d(-Constants.DriveConstants.wheelBase / 2, -Constants.DriveConstants.trackWidth / 2);
+    
+    //resets gyro before odometry is declared
+    gyro.reset();
 
     kinematics = new SwerveDriveKinematics(locationFL, locationFR, locationBL, locationBR);
     odometry = new SwerveDriveOdometry(kinematics, new Rotation2d(getHeading()));
