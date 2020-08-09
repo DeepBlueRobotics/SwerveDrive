@@ -7,6 +7,7 @@ import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 
 import org.team199.lib.SwerveMath;
 
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -25,6 +26,7 @@ public class SwerveModule {
     private double targetAngle, expectedSpeed;
     private int turnZero, maxAnalog;
     private boolean reversed;
+    private Timer timer;
 
     /**
      * @param type    The type of the swerve module, either FL (Forward-Left), FR (Forward-Right), 
@@ -41,6 +43,9 @@ public class SwerveModule {
      */
     public SwerveModule(ModuleType type, WPI_TalonSRX drive, WPI_TalonSRX turn, double gearRatio, double driveModifier,
                         double maxSpeed, boolean reversed, int turnZero, int maxAnalog) {
+        this.timer = new Timer();
+        timer.start();
+
         this.type = type;
 
         switch (type) {
@@ -97,8 +102,24 @@ public class SwerveModule {
      * @param speed     The desired speed, from -1.0 (maximum speed directed backwards) to 1.0 (maximum speed directed forwards).
      */
     private void setSpeed(double speed) {
-        // There are no encoders on the drive motor controllers so assume current speed = expected speed
-        drive.set(ControlMode.PercentOutput, speed * driveModifier);
+        double deltaTime = timer.get();
+
+        double newExpectedSpeed = maxSpeed * speed * Math.abs(driveModifier);
+
+        // Calculate acceleration and limit it if greater than maximum acceleration (without slippage and with sufficient motors).
+        double desiredAcceleration = (newExpectedSpeed - expectedSpeed) / deltaTime;
+        double maxAcceleration = Constants.DriveConstants.mu * 9.8;
+        double clippedAcceleration = Math.copySign(Math.min(Math.abs(desiredAcceleration), maxAcceleration), desiredAcceleration);
+        
+        expectedSpeed += clippedAcceleration * deltaTime;
+
+        // Reset the timer so get() returns a change in time
+        timer.reset();
+        timer.start();
+        
+        drive.set(ControlMode.PercentOutput, Math.copySign(expectedSpeed, expectedSpeed * driveModifier) / maxSpeed);
+        
+        // Calculate expected speed using applied voltage and current.
         double expectedOmega = (drive.getMotorOutputVoltage() - drive.getStatorCurrent() * Constants.DriveConstants.motorResistance) / Constants.DriveConstants.k;
         expectedSpeed = (Constants.DriveConstants.wheelDiameter / 2) * (expectedOmega / gearRatio);
     }
@@ -141,7 +162,7 @@ public class SwerveModule {
      * @return The angle, in radians, of the swerve module.
     */
     private double getModuleAngle() {
-        return 2 * Math.PI * (turn.getSelectedSensorPosition(0) / gearRatio) % 1;
+        return 2 * Math.PI * ((turn.getSelectedSensorPosition(0) / Math.abs(gearRatio)) % 1);
     }
 
     /**
@@ -166,6 +187,8 @@ public class SwerveModule {
         SmartDashboard.putNumber(moduleString + " Raw Analog Position", turn.getSensorCollection().getAnalogInRaw());
         // Display the module angle as calculated using the absolute encoder.
         SmartDashboard.putNumber(moduleString + " Module Angle", getModuleAngle());
+        // Display the speed that the robot thinks it is travelling at.
+        SmartDashboard.putNumber(moduleString + " Expected Speed: ", expectedSpeed);
     }
 
     /**

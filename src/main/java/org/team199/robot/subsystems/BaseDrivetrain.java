@@ -22,6 +22,10 @@ public abstract class BaseDrivetrain extends SubsystemBase {
     public BaseDrivetrain() {
         // Initialize SwerveModules
         // Forward-Left
+
+        // Reset gyro before odometry is declared
+        gyro.reset();
+
         SwerveModule moduleFL = new SwerveModule(SwerveModule.ModuleType.FL,
                                     MotorControllerFactory.createTalon(Constants.Ports.kDriveFrontLeft), 
                                     MotorControllerFactory.createTalon(Constants.Ports.kTurnFrontLeft), 

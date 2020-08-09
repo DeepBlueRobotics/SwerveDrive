@@ -38,6 +38,8 @@ public final class Constants {
         // Stall current of a CIM motor is 133 Amps at 12 Volts.
         public static final double motorResistance = 12 / 133;
 
+        // Coefficient of static friction for max accleration
+        public static final double mu = 0.1;
         // Original units are in inches and must be converted to meters.
         public static final double wheelBase = 18.15 * inchToMeter;
         public static final double trackWidth = 17.75 * inchToMeter;
