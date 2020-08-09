@@ -188,7 +188,11 @@ public class SwerveModule {
         // Display the module angle as calculated using the absolute encoder.
         SmartDashboard.putNumber(moduleString + " Module Angle", getModuleAngle());
         // Display the speed that the robot thinks it is travelling at.
-        SmartDashboard.putNumber(moduleString + " Expected Speed: ", expectedSpeed);
+        SmartDashboard.putNumber(moduleString + " Expected Speed", expectedSpeed);
+        // Display the applied voltage to the drive motor.
+        SmartDashboard.putNumber(moduleString + " Applied Voltage", drive.getMotorOutputVoltage());
+        // Display the output current of the drive motor.
+        SmartDashboard.putNumber(moduleString + " Stator Current", drive.getStatorCurrent());
     }
 
     /**
