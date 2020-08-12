@@ -27,8 +27,8 @@ public final class Constants {
 
     public static final class DriveConstants {
         // 5330 is the experimental free speed of a CIM motor controller in rev/s
-        // Convert rev/s to rad/s.
-        public static final double CIMFreeSpeed = 5330 * (2 * Math.PI);
+        // Convert rev/min to rad/s.
+        public static final double CIMFreeSpeed = 5330 * (2 * Math.PI) / 60;
         // The gearing between the drive motor controller and the wheels.
         public static final double driveGearing = 6.67;
         public static final double wheelDiameter = 4.0 * inchToMeter;
