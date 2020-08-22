@@ -102,22 +102,20 @@ public class SwerveModule {
     private void setSpeed(double speed) {
         double deltaTime = timer.get();
 
-        double newExpectedSpeed = maxSpeed * speed * Math.abs(driveModifier);
+        double desiredSpeed = maxSpeed * speed * Math.abs(driveModifier);
 
         // Calculate acceleration and limit it if greater than maximum acceleration (without slippage and with sufficient motors).
-        double desiredAcceleration = (newExpectedSpeed - getCurrentSpeed()) / deltaTime;
+        double desiredAcceleration = (desiredSpeed - getCurrentSpeed()) / deltaTime;
         double maxAcceleration = Constants.DriveConstants.mu * 9.8;
         double clippedAcceleration = Math.copySign(Math.min(Math.abs(desiredAcceleration), maxAcceleration), desiredAcceleration);
         
-        double expectedSpeed = getCurrentSpeed() + clippedAcceleration * deltaTime;
+        double clippedDesiredSpeed = getCurrentSpeed() + clippedAcceleration * deltaTime;
 
         // Reset the timer so get() returns a change in time
         timer.reset();
         timer.start();
         
-        drive.set(ControlMode.PercentOutput, Math.copySign(expectedSpeed, expectedSpeed * driveModifier) / maxSpeed);
-        
-        
+        drive.set(ControlMode.PercentOutput, Math.copySign(clippedDesiredSpeed, clippedDesiredSpeed * driveModifier) / maxSpeed);
     }
 
     /**
@@ -172,7 +170,8 @@ public class SwerveModule {
     public double getCurrentSpeed() {
         // Calculate expected speed using applied voltage and current.
         double expectedOmega = (drive.getMotorOutputVoltage() - drive.getStatorCurrent() * Constants.DriveConstants.motorResistance) / Constants.DriveConstants.k;
-        double expectedSpeed = (Constants.DriveConstants.wheelDiameter / 2) * (expectedOmega / Constants.DriveConstants.driveGearing);//180
+        expectedOmega = expectedOmega * Math.signum(driveModifier);
+        double expectedSpeed = (Constants.DriveConstants.wheelDiameter / 2) * (expectedOmega / Constants.DriveConstants.driveGearing);
         return expectedSpeed;
     }
 

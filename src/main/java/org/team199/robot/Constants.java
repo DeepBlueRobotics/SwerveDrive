@@ -47,9 +47,9 @@ public final class Constants {
         // The maximum drive speed (in ft/s for a CIM motor) is listed on the AndyMark page for the Swerve and Steer module.
         // maxForward and maxStrafe are in m/s, maxRCW is in radians, and maxSpeed is in m/s.
         // Speed is the same for maxForward, maxStrafe, and maxSpeed since they are all equal to the max speed for the drive motor 
-        public static final double maxForward = 11.5 * 12 * inchToMeter;
-        public static final double maxStrafe = 11.5 * 12 * inchToMeter;
-        public static final double maxSpeed = 11.5 * 12 * inchToMeter;
+        public static final double maxSpeed = CIMFreeSpeed * (wheelDiameter / 2.0) / driveGearing;
+        public static final double maxForward = maxSpeed;
+        public static final double maxStrafe = maxSpeed;
         // maxRCW is the angular velocity of the robot.
         // Calculated by looking at one of the motors and treating it as a point mass moving around in a circle.
         // Tangential speed of this point mass is maxSpeed and the radius of the circle is sqrt((wheelBase/2)^2 + (trackWidth/2)^2)
