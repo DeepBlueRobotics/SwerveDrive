@@ -23,7 +23,7 @@ public class SwerveModule {
     private String moduleString;
     private WPI_TalonSRX drive, turn;
     private double gearRatio, driveModifier, maxSpeed;
-    private double targetAngle, expectedSpeed;
+    private double targetAngle;
     private int turnZero, maxAnalog;
     private boolean reversed;
     private Timer timer;
@@ -78,8 +78,6 @@ public class SwerveModule {
         this.turnZero = turnZero;
         this.maxAnalog = maxAnalog;
 
-        expectedSpeed = 0.0;
-
         catchError(turn.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder));
     }
 
@@ -107,11 +105,11 @@ public class SwerveModule {
         double newExpectedSpeed = maxSpeed * speed * Math.abs(driveModifier);
 
         // Calculate acceleration and limit it if greater than maximum acceleration (without slippage and with sufficient motors).
-        double desiredAcceleration = (newExpectedSpeed - expectedSpeed) / deltaTime;
+        double desiredAcceleration = (newExpectedSpeed - getCurrentSpeed()) / deltaTime;
         double maxAcceleration = Constants.DriveConstants.mu * 9.8;
         double clippedAcceleration = Math.copySign(Math.min(Math.abs(desiredAcceleration), maxAcceleration), desiredAcceleration);
         
-        expectedSpeed += clippedAcceleration * deltaTime;
+        double expectedSpeed = getCurrentSpeed() + clippedAcceleration * deltaTime;
 
         // Reset the timer so get() returns a change in time
         timer.reset();
@@ -119,9 +117,7 @@ public class SwerveModule {
         
         drive.set(ControlMode.PercentOutput, Math.copySign(expectedSpeed, expectedSpeed * driveModifier) / maxSpeed);
         
-        // Calculate expected speed using applied voltage and current.
-        double expectedOmega = (drive.getMotorOutputVoltage() - drive.getStatorCurrent() * Constants.DriveConstants.motorResistance) / Constants.DriveConstants.k;
-        expectedSpeed = (Constants.DriveConstants.wheelDiameter / 2) * (expectedOmega / Constants.DriveConstants.driveGearing);
+        
     }
 
     /**
@@ -170,7 +166,14 @@ public class SwerveModule {
      * @return A SwerveModuleState object representing the speed and angle of the module.
      */
     public SwerveModuleState getCurrentState() {
-        return new SwerveModuleState(expectedSpeed, new Rotation2d(getModuleAngle()));
+        return new SwerveModuleState(getCurrentSpeed(), new Rotation2d(getModuleAngle()));
+    }
+
+    public double getCurrentSpeed() {
+        // Calculate expected speed using applied voltage and current.
+        double expectedOmega = (drive.getMotorOutputVoltage() - drive.getStatorCurrent() * Constants.DriveConstants.motorResistance) / Constants.DriveConstants.k;
+        double expectedSpeed = (Constants.DriveConstants.wheelDiameter / 2) * (expectedOmega / Constants.DriveConstants.driveGearing);//180
+        return expectedSpeed;
     }
 
     /**
@@ -188,7 +191,7 @@ public class SwerveModule {
         // Display the module angle as calculated using the absolute encoder.
         SmartDashboard.putNumber(moduleString + " Module Angle", getModuleAngle());
         // Display the speed that the robot thinks it is travelling at.
-        SmartDashboard.putNumber(moduleString + " Expected Speed", expectedSpeed);
+        SmartDashboard.putNumber(moduleString + " Current Speed", getCurrentSpeed());
         // Display the applied voltage to the drive motor.
         SmartDashboard.putNumber(moduleString + " Applied Voltage", drive.getMotorOutputVoltage());
         // Display the output current of the drive motor.
