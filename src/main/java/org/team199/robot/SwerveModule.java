@@ -121,7 +121,7 @@ public class SwerveModule {
         
         // Calculate expected speed using applied voltage and current.
         double expectedOmega = (drive.getMotorOutputVoltage() - drive.getStatorCurrent() * Constants.DriveConstants.motorResistance) / Constants.DriveConstants.k;
-        expectedSpeed = (Constants.DriveConstants.wheelDiameter / 2) * (expectedOmega / gearRatio);
+        expectedSpeed = (Constants.DriveConstants.wheelDiameter / 2) * (expectedOmega / Constants.DriveConstants.driveGearing);
     }
 
     /**

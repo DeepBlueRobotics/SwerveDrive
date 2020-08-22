@@ -36,7 +36,7 @@ public final class Constants {
         // k = Maximum Volts / Max Angular Velocity.
         public static final double k = 12.0 / CIMFreeSpeed;
         // Stall current of a CIM motor is 133 Amps at 12 Volts.
-        public static final double motorResistance = 12 / 133;
+        public static final double motorResistance = 12.0 / 133.0;
 
         // Coefficient of static friction for max accleration
         public static final double mu = 0.1;
