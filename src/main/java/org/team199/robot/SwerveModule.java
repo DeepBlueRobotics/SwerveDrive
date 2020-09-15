@@ -12,8 +12,6 @@ import edu.wpi.first.wpilibj.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
-import org.team199.robot.Constants;
-
 /**
  * A class that stores all the variables and methods applicaple to a single swerve module,
  * such as moving, getting encoder values, or configuring PID.
@@ -24,8 +22,9 @@ public class SwerveModule {
     private ModuleType type;
     private String moduleString;
     private WPI_TalonSRX drive, turn;
-    private double gearRatio, driveModifier, maxSpeed;
-    private double targetAngle, expectedSpeed;
+    private double driveGearRatio, wheelDiameter, cyclesPerRevolution;
+    private double turnGearRatio, driveModifier, maxSpeed;
+    private double targetAngle;
     private int turnZero, maxAnalog;
     private boolean reversed;
     private Timer timer;
@@ -35,7 +34,7 @@ public class SwerveModule {
      *                BL (Backward-Left), or BR (Backward-Right).
      * @param drive   The TalonSRX motor controller for driving forward and backwards.
      * @param turn    The TalonSRX motor controller for turning the module into the correct orientation.
-     * @param gearRatio     The gear ratio for the <i> turn </i> motor controller.
+     * @param turnGearRatio     The gear ratio for the <i> turn </i> motor controller.
      *                      Used for determining the angle of the module.
      * @param driveModifier     A double which controls the speed passed into drive.setSpeed()
      * @param maxSpeed          The maximum speed, in m/s, of the SwerveModule. This should be the same speed when normalizing.
@@ -43,8 +42,8 @@ public class SwerveModule {
      * @param turnZero          The desired raw analog encoder value to reach during HomeAbsolute.
      * @param maxAnalog         The maximum value of the raw analog encoder.
      */
-    public SwerveModule(ModuleType type, WPI_TalonSRX drive, WPI_TalonSRX turn, double gearRatio, double driveModifier,
-                        double maxSpeed, boolean reversed, int turnZero, int maxAnalog) {
+    public SwerveModule(ModuleType type, WPI_TalonSRX drive, WPI_TalonSRX turn, double driveGearRatio, double wheelDiameter,
+                        double turnGearRatio, double driveModifier, double maxSpeed, boolean reversed, int turnZero, int maxAnalog) {
         this.timer = new Timer();
         timer.start();
 
@@ -73,15 +72,19 @@ public class SwerveModule {
         this.turn.setSensorPhase(true);
         catchError(this.turn.configAllowableClosedloopError(0, 4));
 
-        this.gearRatio = gearRatio;
+        this.driveGearRatio = driveGearRatio;
+        this.wheelDiameter = wheelDiameter;
+        this.turnGearRatio = turnGearRatio;
         this.driveModifier = driveModifier;
         this.maxSpeed = maxSpeed;
         this.reversed = reversed;
         this.turnZero = turnZero;
         this.maxAnalog = maxAnalog;
-        expectedSpeed = 0.0;
 
+        catchError(drive.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder));
         catchError(turn.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder));
+
+        cyclesPerRevolution = 5.0;        // For an am-3314a CIMcoder, found in the example code on AndyMark
     }
 
     /**
@@ -93,7 +96,7 @@ public class SwerveModule {
         double setpoints[] = SwerveMath.computeSetpoints(normalizedSpeed / maxSpeed,
                                                          -angle / (2 * Math.PI),
                                                          turn.getSelectedSensorPosition(0),
-                                                         gearRatio);
+                                                         turnGearRatio);
         setSpeed(setpoints[0]);
         if(setpoints[0] != 0.0) setAngle(setpoints[1]);
     }
@@ -103,16 +106,22 @@ public class SwerveModule {
      * @param speed     The desired speed, from -1.0 (maximum speed directed backwards) to 1.0 (maximum speed directed forwards).
      */
     private void setSpeed(double speed) {
-        // There are no encoders on the drive motor controllers so assume current speed = expected speed
         double deltaTime = timer.get();
-        double newExpectedSpeed = maxSpeed * speed * Math.abs(driveModifier);
-        double desiredAcceleration = (newExpectedSpeed - expectedSpeed) / deltaTime;
+
+        double desiredSpeed = maxSpeed * speed * Math.abs(driveModifier);
+
+        // Calculate acceleration and limit it if greater than maximum acceleration (without slippage and with sufficient motors).
+        double desiredAcceleration = (desiredSpeed - getCurrentSpeed()) / deltaTime;
         double maxAcceleration = Constants.DriveConstants.mu * 9.8;
         double clippedAcceleration = Math.copySign(Math.min(Math.abs(desiredAcceleration), maxAcceleration), desiredAcceleration);
-        expectedSpeed += clippedAcceleration * deltaTime;
+        
+        double clippedDesiredSpeed = getCurrentSpeed() + clippedAcceleration * deltaTime;
+
+        // Reset the timer so get() returns a change in time
         timer.reset();
         timer.start();
-        drive.set(ControlMode.PercentOutput, Math.copySign(expectedSpeed, expectedSpeed * driveModifier) / maxSpeed);
+        
+        drive.set(ControlMode.PercentOutput, Math.copySign(clippedDesiredSpeed, clippedDesiredSpeed * driveModifier) / maxSpeed);
     }
 
     /**
@@ -120,7 +129,7 @@ public class SwerveModule {
      * @param angle     The desired angle, between -0.5 (180 degrees counterclockwise) and 0.5 (180 degrees clockwise).
      */
     private void setAngle(double angle) {
-        targetAngle = (reversed ? -1 : 1) * angle * gearRatio;
+        targetAngle = (reversed ? -1 : 1) * angle * turnGearRatio;
         turn.set(ControlMode.Position, targetAngle);
     }
 
@@ -153,7 +162,7 @@ public class SwerveModule {
      * @return The angle, in radians, of the swerve module.
     */
     private double getModuleAngle() {
-        return 2 * Math.PI * ((turn.getSelectedSensorPosition(0) / Math.abs(gearRatio)) % 1);
+        return 2 * Math.PI * ((turn.getSelectedSensorPosition(0) / Math.abs(turnGearRatio)) % 1);
     }
 
     /**
@@ -161,7 +170,13 @@ public class SwerveModule {
      * @return A SwerveModuleState object representing the speed and angle of the module.
      */
     public SwerveModuleState getCurrentState() {
-        return new SwerveModuleState(expectedSpeed, new Rotation2d(getModuleAngle()));
+        return new SwerveModuleState(getCurrentSpeed(), new Rotation2d(getModuleAngle()));
+    }
+
+    public double getCurrentSpeed() {
+        // Encoder ticks/sec * meters/tick
+        double currentSpeed = drive.getSelectedSensorVelocity(0) * (Math.PI * wheelDiameter / cyclesPerRevolution) / driveGearRatio;
+        return currentSpeed;
     }
 
     /**
@@ -178,8 +193,12 @@ public class SwerveModule {
         SmartDashboard.putNumber(moduleString + " Raw Analog Position", turn.getSensorCollection().getAnalogInRaw());
         // Display the module angle as calculated using the absolute encoder.
         SmartDashboard.putNumber(moduleString + " Module Angle", getModuleAngle());
-        //expected SPEEEEEEEEEEEEEEEEEEEEEEEEEEEEED
-        SmartDashboard.putNumber(moduleString + " Expected Speed: ", expectedSpeed);
+        // Display the speed that the robot thinks it is travelling at.
+        SmartDashboard.putNumber(moduleString + " Current Speed", getCurrentSpeed());
+        // Display the applied voltage to the drive motor.
+        SmartDashboard.putNumber(moduleString + " Applied Voltage", drive.getMotorOutputVoltage());
+        // Display the output current of the drive motor.
+        SmartDashboard.putNumber(moduleString + " Stator Current", drive.getStatorCurrent());
     }
 
     /**
@@ -194,7 +213,7 @@ public class SwerveModule {
         // Change the current quadrature encoder position to the difference between the zeroed position and the current position, as measured by the analog encoder.
         // Difference is in analog encoder degrees which must be converted to quadrature encoder ticks.
         // Max value of the analog encoder is MAX_ANALOG, min value is 0.
-        int quadPos = (int) ((Math.abs(gearRatio) / maxAnalog) * (turn.getSensorCollection().getAnalogInRaw() - turnZero));
+        int quadPos = (int) ((Math.abs(turnGearRatio) / maxAnalog) * (turn.getSensorCollection().getAnalogInRaw() - turnZero));
         
         // Set the orientation of the modules to what they would be relative to TURN_ZERO.
         catchError(turn.setSelectedSensorPosition(quadPos));
