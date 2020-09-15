@@ -29,27 +29,31 @@ public abstract class BaseDrivetrain extends SubsystemBase {
         SwerveModule moduleFL = new SwerveModule(SwerveModule.ModuleType.FL,
                                     MotorControllerFactory.createTalon(Constants.Ports.kDriveFrontLeft), 
                                     MotorControllerFactory.createTalon(Constants.Ports.kTurnFrontLeft), 
+                                    Constants.DriveConstants.driveGearing, Constants.DriveConstants.wheelDiameter,
                                     Constants.DriveConstants.GEAR_RATIO[0], -Constants.DriveConstants.kDriveModifier, 
                                     Constants.DriveConstants.maxSpeed, Constants.DriveConstants.reversed[0],
                                     Constants.DriveConstants.TURN_ZERO[0], Constants.DriveConstants.MAX_ANALOG[0]);
         // Forward-Right
         SwerveModule moduleFR = new SwerveModule(SwerveModule.ModuleType.FR,
                                     MotorControllerFactory.createTalon(Constants.Ports.kDriveFrontRight), 
-                                    MotorControllerFactory.createTalon(Constants.Ports.kTurnFrontRight), 
+                                    MotorControllerFactory.createTalon(Constants.Ports.kTurnFrontRight),
+                                    Constants.DriveConstants.driveGearing, Constants.DriveConstants.wheelDiameter,
                                     Constants.DriveConstants.GEAR_RATIO[1], Constants.DriveConstants.kDriveModifier,
                                     Constants.DriveConstants.maxSpeed, Constants.DriveConstants.reversed[1],
                                     Constants.DriveConstants.TURN_ZERO[1], Constants.DriveConstants.MAX_ANALOG[1]);
         // Backward-Left
         SwerveModule moduleBL = new SwerveModule(SwerveModule.ModuleType.BL,
                                     MotorControllerFactory.createTalon(Constants.Ports.kDriveBackLeft), 
-                                    MotorControllerFactory.createTalon(Constants.Ports.kTurnBackLeft), 
+                                    MotorControllerFactory.createTalon(Constants.Ports.kTurnBackLeft),
+                                    Constants.DriveConstants.driveGearing, Constants.DriveConstants.wheelDiameter,
                                     Constants.DriveConstants.GEAR_RATIO[2], -Constants.DriveConstants.kDriveModifier,
                                     Constants.DriveConstants.maxSpeed, Constants.DriveConstants.reversed[2],
                                     Constants.DriveConstants.TURN_ZERO[2], Constants.DriveConstants.MAX_ANALOG[2]);
         // Backward-Right
         SwerveModule moduleBR = new SwerveModule(SwerveModule.ModuleType.BR,
                                     MotorControllerFactory.createTalon(Constants.Ports.kDriveBackRight), 
-                                    MotorControllerFactory.createTalon(Constants.Ports.kTurnBackRight), 
+                                    MotorControllerFactory.createTalon(Constants.Ports.kTurnBackRight),
+                                    Constants.DriveConstants.driveGearing, Constants.DriveConstants.wheelDiameter,
                                     Constants.DriveConstants.GEAR_RATIO[3], Constants.DriveConstants.kDriveModifier,
                                     Constants.DriveConstants.maxSpeed, Constants.DriveConstants.reversed[3],
                                     Constants.DriveConstants.TURN_ZERO[3], Constants.DriveConstants.MAX_ANALOG[3]);
