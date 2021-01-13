@@ -2,7 +2,7 @@ package org.team199.robot.subsystems;
 
 import com.kauailabs.navx.frc.AHRS;
 
-import org.team199.lib.MotorControllerFactory;
+import frc.robot.lib.MotorControllerFactory;
 import org.team199.robot.Constants;
 import org.team199.robot.SwerveModule;
 
