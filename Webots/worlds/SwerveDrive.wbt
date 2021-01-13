@@ -1,0 +1,219 @@
+#VRML_SIM R2020b utf8
+WorldInfo {
+  coordinateSystem "NUE"
+}
+Viewpoint {
+  orientation -0.06609492532470478 -0.9966580870298041 -0.04800123336346131 1.2594349138154644
+  position -1.0133071437352552 0.20735017315874227 0.42929223069044214
+}
+TexturedBackground {
+}
+TexturedBackgroundLight {
+}
+RectangleArena {
+  floorSize 10 10
+}
+Robot {
+  translation -1.4018431852517988e-09 0.0821480183746416 -3.046621508276479e-15
+  rotation -2.1633175937250165e-06 1.4564914616679911e-08 0.9999999999976599 1.5870941108284525e-08
+  children [
+    Solid {
+      translation 0 0.0635 0
+      rotation 0.9020651059950672 5.26733434647014e-06 0.4315999820648319 7.072420838054932e-19
+      children [
+        Hinge2Joint {
+          jointParameters HingeJointParameters {
+            position 3.027162612206934e-17
+            axis 0 1 0
+            anchor 0.152 -0.0885 0.162
+          }
+          jointParameters2 JointParameters {
+            position 6.552731583253993e-17
+            axis 1 0 0
+          }
+          device [
+            RotationalMotor {
+              name "PWM[10]"
+            }
+            PositionSensor {
+              name "position sensor(3)"
+            }
+          ]
+          device2 [
+            RotationalMotor {
+              name "PWM[14]"
+            }
+          ]
+          endPoint Solid {
+            translation 0.1516 -0.0885 0.162
+            rotation 0.5773506025225372 -0.5773506025225372 0.5773496025232256 2.0944
+            children [
+              DEF Wheel Shape {
+                appearance PBRAppearance {
+                }
+                geometry Cylinder {
+                  height 0.015
+                  radius 0.0635
+                }
+              }
+            ]
+            name "BR Wheel"
+            boundingObject USE Wheel
+            physics Physics {
+            }
+            linearVelocity -5.073464533529952e-10 -1.077083146886778e-05 3.3222711120942613e-16
+            angularVelocity 5.274116376935808e-15 3.790832908038216e-16 -1.9920738993847853e-10
+          }
+        }
+        Hinge2Joint {
+          jointParameters HingeJointParameters {
+            position 1.8127968190816277e-16
+            axis 0 1 0
+            anchor -0.152 -0.0885 0.162
+          }
+          jointParameters2 JointParameters {
+            position 2.098989994943521e-16
+            axis 1 0 0
+          }
+          device [
+            RotationalMotor {
+              name "PWM[5]"
+            }
+            PositionSensor {
+              name "position sensor(2)"
+            }
+          ]
+          device2 [
+            RotationalMotor {
+              name "PWM[1]"
+            }
+          ]
+          endPoint Solid {
+            translation -0.1516 -0.0885 0.162
+            rotation 0.5773506025225372 -0.5773506025225372 0.5773496025232256 2.0944
+            children [
+              DEF Wheel Shape {
+                appearance PBRAppearance {
+                }
+                geometry Cylinder {
+                  height 0.015
+                  radius 0.0635
+                }
+              }
+            ]
+            name "BL Wheel"
+            boundingObject USE Wheel
+            physics Physics {
+            }
+            linearVelocity 5.28311420714453e-10 -1.0770781586038129e-05 3.8659462734016686e-16
+            angularVelocity 4.88241971104144e-15 -5.793881093814318e-16 -1.3049948975610961e-10
+          }
+        }
+        Hinge2Joint {
+          jointParameters HingeJointParameters {
+            position 9.862002633026341e-17
+            axis 0 1 0
+            anchor -0.152 -0.0885 -0.162
+          }
+          jointParameters2 JointParameters {
+            position -1.2148146529521206e-17
+            axis 1 0 0
+          }
+          device [
+            RotationalMotor {
+              name "PWM[4]"
+            }
+            PositionSensor {
+              name "position sensor(1)"
+            }
+          ]
+          device2 [
+            RotationalMotor {
+              name "PWM[0]"
+            }
+          ]
+          endPoint Solid {
+            translation -0.1516 -0.0885 -0.162
+            rotation 0.5773506025225372 -0.5773506025225372 0.5773496025232256 2.0944
+            children [
+              DEF Wheel Shape {
+                appearance PBRAppearance {
+                }
+                geometry Cylinder {
+                  height 0.015
+                  radius 0.0635
+                }
+              }
+            ]
+            name "FL Wheel"
+            boundingObject USE Wheel
+            physics Physics {
+            }
+            linearVelocity 5.283091414296019e-10 -1.0770781591155134e-05 4.742985518226555e-16
+            angularVelocity 6.876184168304836e-15 5.391837990373555e-16 -1.3045941358561676e-10
+          }
+        }
+        Hinge2Joint {
+          jointParameters HingeJointParameters {
+            position 3.026882858743805e-17
+            axis 0 1 0
+            anchor 0.152 -0.0885 -0.162
+          }
+          jointParameters2 JointParameters {
+            position -4.831314994878556e-16
+            axis 1 0 0
+          }
+          device [
+            RotationalMotor {
+              name "PWM[11]"
+            }
+            PositionSensor {
+            }
+          ]
+          device2 [
+            RotationalMotor {
+              name "PWM[15]"
+            }
+          ]
+          endPoint Solid {
+            translation 0.1516 -0.0885 -0.162
+            rotation 0.5773506025225371 -0.5773506025225371 0.5773496025232258 2.0943999999999994
+            children [
+              DEF Wheel Shape {
+                appearance PBRAppearance {
+                }
+                geometry Cylinder {
+                  height 0.015
+                  radius 0.0635
+                }
+              }
+            ]
+            name "FR Wheel"
+            boundingObject USE Wheel
+            physics Physics {
+            }
+            linearVelocity -5.073444827427035e-10 -1.0770831479979827e-05 3.5020783284297855e-16
+            angularVelocity 5.713984395016848e-15 -1.7708419287456994e-16 -1.9926972500647844e-10
+          }
+        }
+        DEF Base Shape {
+          appearance PBRAppearance {
+            metalness 0.1
+          }
+          geometry Box {
+            size 0.46101 0.05 0.45085
+          }
+        }
+      ]
+      boundingObject USE Base
+      physics Physics {
+      }
+    }
+  ]
+  boundingObject Box {
+    size 0.461 0.177 0.451
+  }
+  physics Physics {
+  }
+  controller "WPILibWebSocketsToWebots"
+}
