@@ -43,6 +43,10 @@ public final class Constants {
         // Tangential speed of this point mass is maxSpeed and the radius of the circle is sqrt((wheelBase/2)^2 + (trackWidth/2)^2)
         // Angular velocity = Tangential speed / radius
         public static final double maxRCW = maxSpeed / Math.sqrt(Math.pow(wheelBase / 2, 2) + Math.pow(trackWidth / 2, 2));
+        
+        // The gearing between the drive motor controller and the wheels.
+        public static final double driveGearing = 6.67;
+        public static final double wheelDiameter = 4.0 * inchToMeter;
 
         // kP, kI, and kD constants for drive motor controllers in the order of front-left, front-right, back-left, back-right.
         public static final double[] driveKP = {20.0, 20.0, 20.0, 20.0};
