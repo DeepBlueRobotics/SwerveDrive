@@ -39,7 +39,7 @@ public final class Constants {
         public static final double motorResistance = 12.0 / 133.0;
 
         // Coefficient of static friction for max accleration
-        public static final double mu = 0.1;
+        public static final double mu = 0.6;
         // Original units are in inches and must be converted to meters.
         public static final double wheelBase = 18.15 * inchToMeter;
         public static final double trackWidth = 17.75 * inchToMeter;
@@ -69,9 +69,9 @@ public final class Constants {
         // Drivetrain Characterization constants in the order of front-left, front-right, back-left, back-right.
         public static final double[] kVels = {0.0, 0.0, 0.0, 0.0};
         public static final double[] kAccels = {0.0, 0.0, 0.0, 0.0};
-        public static final double[] kVolts = {0.0, 0.0, 0.0, 0.0};
+        public static final double[] kVolts = {0.0, 0.0, 0.35, 0.0};//0.1
 
-        public static final double kDriveModifier = 0.6;
+        public static final double kDriveModifier = 1;
 
         // Whether or not steering should be reversed
         public static final boolean reversed[] = {false, false, false, false};

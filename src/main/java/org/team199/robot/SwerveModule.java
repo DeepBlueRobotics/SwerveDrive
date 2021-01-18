@@ -8,6 +8,7 @@ import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import org.team199.lib.SwerveMath;
 
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.controller.SimpleMotorFeedforward;
 import edu.wpi.first.wpilibj.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -28,6 +29,7 @@ public class SwerveModule {
     private int turnZero, maxAnalog;
     private boolean reversed;
     private Timer timer;
+    private SimpleMotorFeedforward simpleMotorFeedforward;//never typo
 
     /**
      * @param type    The type of the swerve module, either FL (Forward-Left), FR (Forward-Right), 
@@ -43,7 +45,7 @@ public class SwerveModule {
      * @param maxAnalog         The maximum value of the raw analog encoder.
      */
     public SwerveModule(ModuleType type, WPI_TalonSRX drive, WPI_TalonSRX turn, double gearRatio, double driveModifier, 
-                        double maxSpeed, boolean reversed, int turnZero, int maxAnalog) {
+                        double maxSpeed, boolean reversed, int turnZero, int maxAnalog, double kVolt) {
         this.timer = new Timer();
         timer.start();
 
@@ -84,6 +86,8 @@ public class SwerveModule {
 
         // For an am-3314a CIMcoder, 20 pulses per revolution per channel, 2 edges per pulse = 80 total edges
         edgesPerRevolution = 80.0;
+
+        this.simpleMotorFeedforward = new SimpleMotorFeedforward(kVolt, driveModifier / maxSpeed);
     }
 
     /**
@@ -115,12 +119,17 @@ public class SwerveModule {
         double clippedAcceleration = Math.copySign(Math.min(Math.abs(desiredAcceleration), maxAcceleration), desiredAcceleration);
         
         double clippedDesiredSpeed = getCurrentSpeed() + clippedAcceleration * deltaTime;
+        double appliedVoltage = simpleMotorFeedforward.calculate(clippedDesiredSpeed); //percent of system (12v)
 
         // Reset the timer so get() returns a change in time
         timer.reset();
         timer.start();
+        SmartDashboard.putNumber(moduleString + " Expected Speed", desiredSpeed);
+        SmartDashboard.putNumber(moduleString + " Clipped Acceleration", clippedAcceleration);
+        SmartDashboard.putNumber(moduleString + " Clipped Speed", clippedDesiredSpeed);
         
-        drive.set(ControlMode.PercentOutput, Math.copySign(clippedDesiredSpeed, clippedDesiredSpeed * driveModifier) / maxSpeed);
+        drive.set(ControlMode.PercentOutput, appliedVoltage);
+        //drive.set(ControlMode.PercentOutput, Math.copySign(desiredSpeed, desiredSpeed * driveModifier) / maxSpeed);
     }
 
     /**
@@ -201,6 +210,8 @@ public class SwerveModule {
         SmartDashboard.putNumber(moduleString + " Applied Voltage", drive.getMotorOutputVoltage());
         // Display the output current of the drive motor.
         SmartDashboard.putNumber(moduleString + " Stator Current", drive.getStatorCurrent());
+        /////////////////:
+        SmartDashboard.putNumber(moduleString + " Drive Encoder Position", drive.getSelectedSensorPosition(0) * (Math.PI * Constants.DriveConstants.wheelDiameter / edgesPerRevolution) / Constants.DriveConstants.driveGearing);
     }
 
     /**
