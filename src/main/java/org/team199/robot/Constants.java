@@ -69,7 +69,7 @@ public final class Constants {
         // Drivetrain Characterization constants in the order of front-left, front-right, back-left, back-right.
         public static final double[] kVels = {0.0, 0.0, 0.0, 0.0};
         public static final double[] kAccels = {0.0, 0.0, 0.0, 0.0};
-        public static final double[] kVolts = {0.0, 0.0, 0.35, 0.0};//0.1
+        public static final double[] kVolts = {0.35, 0.16, 0.35, 0.1};//0.1
 
         public static final double kDriveModifier = 1;
 
