@@ -22,8 +22,8 @@ public class SwerveModule {
     private ModuleType type;
     private String moduleString;
     private WPI_TalonSRX drive, turn;
-    private double driveGearRatio, wheelDiameter, edgesPerRevolution;
-    private double turnGearRatio, driveModifier, maxSpeed;
+    private double edgesPerRevolution;
+    private double gearRatio, driveModifier, maxSpeed;
     private double targetAngle;
     private int turnZero, maxAnalog;
     private boolean reversed;
@@ -34,7 +34,7 @@ public class SwerveModule {
      *                BL (Backward-Left), or BR (Backward-Right).
      * @param drive   The TalonSRX motor controller for driving forward and backwards.
      * @param turn    The TalonSRX motor controller for turning the module into the correct orientation.
-     * @param turnGearRatio     The gear ratio for the <i> turn </i> motor controller.
+     * @param gearRatio     The gear ratio for the <i> turn </i> motor controller.
      *                      Used for determining the angle of the module.
      * @param driveModifier     A double which controls the speed passed into drive.setSpeed()
      * @param maxSpeed          The maximum speed, in m/s, of the SwerveModule. This should be the same speed when normalizing.
@@ -42,8 +42,8 @@ public class SwerveModule {
      * @param turnZero          The desired raw analog encoder value to reach during HomeAbsolute.
      * @param maxAnalog         The maximum value of the raw analog encoder.
      */
-    public SwerveModule(ModuleType type, WPI_TalonSRX drive, WPI_TalonSRX turn, double driveGearRatio, double wheelDiameter,
-                        double turnGearRatio, double driveModifier, double maxSpeed, boolean reversed, int turnZero, int maxAnalog) {
+    public SwerveModule(ModuleType type, WPI_TalonSRX drive, WPI_TalonSRX turn, double gearRatio, double driveModifier, 
+                        double maxSpeed, boolean reversed, int turnZero, int maxAnalog) {
         this.timer = new Timer();
         timer.start();
 
@@ -72,9 +72,7 @@ public class SwerveModule {
         this.turn.setSensorPhase(true);
         catchError(this.turn.configAllowableClosedloopError(0, 4));
 
-        this.driveGearRatio = driveGearRatio;
-        this.wheelDiameter = wheelDiameter;
-        this.turnGearRatio = turnGearRatio;
+        this.gearRatio = gearRatio;
         this.driveModifier = driveModifier;
         this.maxSpeed = maxSpeed;
         this.reversed = reversed;
@@ -97,7 +95,7 @@ public class SwerveModule {
         double setpoints[] = SwerveMath.computeSetpoints(normalizedSpeed / maxSpeed,
                                                          -angle / (2 * Math.PI),
                                                          turn.getSelectedSensorPosition(0),
-                                                         turnGearRatio);
+                                                         gearRatio);
         setSpeed(setpoints[0]);
         if(setpoints[0] != 0.0) setAngle(setpoints[1]);
     }
@@ -130,7 +128,7 @@ public class SwerveModule {
      * @param angle     The desired angle, between -0.5 (180 degrees counterclockwise) and 0.5 (180 degrees clockwise).
      */
     private void setAngle(double angle) {
-        targetAngle = (reversed ? -1 : 1) * angle * turnGearRatio;
+        targetAngle = (reversed ? -1 : 1) * angle * gearRatio;
         turn.set(ControlMode.Position, targetAngle);
     }
 
@@ -163,7 +161,7 @@ public class SwerveModule {
      * @return The angle, in radians, of the swerve module.
     */
     private double getModuleAngle() {
-        return 2 * Math.PI * ((turn.getSelectedSensorPosition(0) / Math.abs(turnGearRatio)) % 1);
+        return 2 * Math.PI * ((turn.getSelectedSensorPosition(0) / Math.abs(gearRatio)) % 1);
     }
 
     /**
@@ -176,7 +174,8 @@ public class SwerveModule {
 
     public double getCurrentSpeed() {
         // Encoder edges/sec * revolutions/edge * meters/revolution
-        double currentSpeed = drive.getSelectedSensorVelocity(0) * (Math.PI * wheelDiameter / edgesPerRevolution) / driveGearRatio;
+        double currentSpeed = drive.getSelectedSensorVelocity(0) * (Math.PI * Constants.DriveConstants.wheelDiameter / edgesPerRevolution);
+        currentSpeed /= Constants.DriveConstants.driveGearing;
         return currentSpeed;
     }
 
@@ -214,7 +213,7 @@ public class SwerveModule {
         // Change the current quadrature encoder position to the difference between the zeroed position and the current position, as measured by the analog encoder.
         // Difference is in analog encoder degrees which must be converted to quadrature encoder ticks.
         // Max value of the analog encoder is MAX_ANALOG, min value is 0.
-        int quadPos = (int) ((Math.abs(turnGearRatio) / maxAnalog) * (turn.getSensorCollection().getAnalogInRaw() - turnZero));
+        int quadPos = (int) ((Math.abs(gearRatio) / maxAnalog) * (turn.getSensorCollection().getAnalogInRaw() - turnZero));
         
         // Set the orientation of the modules to what they would be relative to TURN_ZERO.
         catchError(turn.setSelectedSensorPosition(quadPos));
