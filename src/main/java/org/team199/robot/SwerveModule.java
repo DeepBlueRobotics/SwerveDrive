@@ -22,7 +22,7 @@ public class SwerveModule {
     private ModuleType type;
     private String moduleString;
     private WPI_TalonSRX drive, turn;
-    private double driveGearRatio, wheelDiameter, cyclesPerRevolution;
+    private double driveGearRatio, wheelDiameter, edgesPerRevolution;
     private double turnGearRatio, driveModifier, maxSpeed;
     private double targetAngle;
     private int turnZero, maxAnalog;
@@ -84,7 +84,8 @@ public class SwerveModule {
         catchError(drive.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder));
         catchError(turn.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder));
 
-        cyclesPerRevolution = 5.0;        // For an am-3314a CIMcoder, found in the example code on AndyMark
+        // For an am-3314a CIMcoder, 20 pulses per revolution per channel, 2 edges per pulse = 80 total edges
+        edgesPerRevolution = 80.0;
     }
 
     /**
@@ -174,8 +175,8 @@ public class SwerveModule {
     }
 
     public double getCurrentSpeed() {
-        // Encoder ticks/sec * meters/tick
-        double currentSpeed = drive.getSelectedSensorVelocity(0) * (Math.PI * wheelDiameter / cyclesPerRevolution) / driveGearRatio;
+        // Encoder edges/sec * revolutions/edge * meters/revolution
+        double currentSpeed = drive.getSelectedSensorVelocity(0) * (Math.PI * wheelDiameter / edgesPerRevolution) / driveGearRatio;
         return currentSpeed;
     }
 
