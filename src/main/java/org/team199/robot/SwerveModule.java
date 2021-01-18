@@ -87,7 +87,7 @@ public class SwerveModule {
         // For an am-3314a CIMcoder, 20 pulses per revolution per channel, 2 edges per pulse = 80 total edges
         edgesPerRevolution = 80.0;
 
-        this.simpleMotorFeedforward = new SimpleMotorFeedforward(kVolt, driveModifier / maxSpeed);
+        this.simpleMotorFeedforward = new SimpleMotorFeedforward(kVolt, 1 / maxSpeed);
     }
 
     /**
@@ -128,7 +128,7 @@ public class SwerveModule {
         SmartDashboard.putNumber(moduleString + " Clipped Acceleration", clippedAcceleration);
         SmartDashboard.putNumber(moduleString + " Clipped Speed", clippedDesiredSpeed);
         
-        drive.set(ControlMode.PercentOutput, appliedVoltage);
+        drive.set(ControlMode.PercentOutput, driveModifier * appliedVoltage);
         //drive.set(ControlMode.PercentOutput, Math.copySign(desiredSpeed, desiredSpeed * driveModifier) / maxSpeed);
     }
 
