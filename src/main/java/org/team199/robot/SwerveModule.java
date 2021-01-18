@@ -176,6 +176,8 @@ public class SwerveModule {
         // Encoder edges/sec * revolutions/edge * meters/revolution
         double currentSpeed = drive.getSelectedSensorVelocity(0) * (Math.PI * Constants.DriveConstants.wheelDiameter / edgesPerRevolution);
         currentSpeed /= Constants.DriveConstants.driveGearing;
+        // Multiply by 10 since the units of getSelectedSensorVelocity() are in meters per 100 ms
+        currentSpeed *= 10;
         return currentSpeed;
     }
 
