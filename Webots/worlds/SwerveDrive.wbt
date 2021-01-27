@@ -3,8 +3,8 @@ WorldInfo {
   coordinateSystem "NUE"
 }
 Viewpoint {
-  orientation -0.06609492532470478 -0.9966580870298041 -0.04800123336346131 1.2594349138154644
-  position -1.0133071437352552 0.20735017315874227 0.42929223069044214
+  orientation -0.07689761053582195 -0.9947262528579701 -0.06787075488767354 1.4514984440401042
+  position -10.929849430640946 1.4988239926797788 2.5570314784133648
 }
 TexturedBackground {
 }
@@ -14,21 +14,23 @@ RectangleArena {
   floorSize 10 10
 }
 Robot {
-  translation -1.4018431852517988e-09 0.0821480183746416 -3.046621508276479e-15
-  rotation -2.1633175937250165e-06 1.4564914616679911e-08 0.9999999999976599 1.5870941108284525e-08
+  translation -2.9003257405302895e-07 0.0821466432242669 -5.796146372280464e-13
+  rotation -2.1381191572311983e-06 -9.533766105630796e-06 0.9999999999522678 2.3056003032458183e-08
   children [
     Solid {
       translation 0 0.0635 0
       rotation 0.9020651059950672 5.26733434647014e-06 0.4315999820648319 7.072420838054932e-19
       children [
+        Gyro {
+        }
         Hinge2Joint {
           jointParameters HingeJointParameters {
-            position 3.027162612206934e-17
+            position 7.660075906891375e-16
             axis 0 1 0
             anchor 0.152 -0.0885 0.162
           }
           jointParameters2 JointParameters {
-            position 6.552731583253993e-17
+            position 5.965373526639451e-16
             axis 1 0 0
           }
           device [
@@ -36,7 +38,7 @@ Robot {
               name "PWM[10]"
             }
             PositionSensor {
-              name "position sensor(3)"
+              name "PhoenixSensor[10]"
             }
           ]
           device2 [
@@ -45,8 +47,8 @@ Robot {
             }
           ]
           endPoint Solid {
-            translation 0.1516 -0.0885 0.162
-            rotation 0.5773506025225372 -0.5773506025225372 0.5773496025232256 2.0944
+            translation 0.15159999999999998 -0.0884999999999998 0.16200000000000003
+            rotation 0.5773506025225384 -0.5773506025225372 0.5773496025232243 2.094399999999999
             children [
               DEF Wheel Shape {
                 appearance PBRAppearance {
@@ -61,18 +63,18 @@ Robot {
             boundingObject USE Wheel
             physics Physics {
             }
-            linearVelocity -5.073464533529952e-10 -1.077083146886778e-05 3.3222711120942613e-16
-            angularVelocity 5.274116376935808e-15 3.790832908038216e-16 -1.9920738993847853e-10
+            linearVelocity -6.578999227874073e-10 0.00015998951739968286 -1.6889945711675792e-15
+            angularVelocity -2.6694083292893926e-14 -1.693006031583398e-15 -5.209614012253196e-08
           }
         }
         Hinge2Joint {
           jointParameters HingeJointParameters {
-            position 1.8127968190816277e-16
+            position 8.972879477305434e-16
             axis 0 1 0
             anchor -0.152 -0.0885 0.162
           }
           jointParameters2 JointParameters {
-            position 2.098989994943521e-16
+            position 8.369115161402117e-16
             axis 1 0 0
           }
           device [
@@ -80,7 +82,7 @@ Robot {
               name "PWM[5]"
             }
             PositionSensor {
-              name "position sensor(2)"
+              name "PhoenixSensor[5]"
             }
           ]
           device2 [
@@ -89,8 +91,8 @@ Robot {
             }
           ]
           endPoint Solid {
-            translation -0.1516 -0.0885 0.162
-            rotation 0.5773506025225372 -0.5773506025225372 0.5773496025232256 2.0944
+            translation -0.15159999999999996 -0.0884999999999998 0.16200000000000003
+            rotation 0.5773506025218 -0.5773506025217974 0.5773496025247027 2.09439999999778
             children [
               DEF Wheel Shape {
                 appearance PBRAppearance {
@@ -105,18 +107,18 @@ Robot {
             boundingObject USE Wheel
             physics Physics {
             }
-            linearVelocity 5.28311420714453e-10 -1.0770781586038129e-05 3.8659462734016686e-16
-            angularVelocity 4.88241971104144e-15 -5.793881093814318e-16 -1.3049948975610961e-10
+            linearVelocity -8.248643215037369e-10 0.00015998617567194177 -1.6491021308696073e-15
+            angularVelocity -2.5964160691378472e-14 7.943973396159075e-17 7.545519902252238e-08
           }
         }
         Hinge2Joint {
           jointParameters HingeJointParameters {
-            position 9.862002633026341e-17
+            position -3.068803974660971e-16
             axis 0 1 0
             anchor -0.152 -0.0885 -0.162
           }
           jointParameters2 JointParameters {
-            position -1.2148146529521206e-17
+            position -3.1260416052573303e-16
             axis 1 0 0
           }
           device [
@@ -124,7 +126,7 @@ Robot {
               name "PWM[4]"
             }
             PositionSensor {
-              name "position sensor(1)"
+              name "PhoenixSensor[4]"
             }
           ]
           device2 [
@@ -133,8 +135,8 @@ Robot {
             }
           ]
           endPoint Solid {
-            translation -0.1516 -0.0885 -0.162
-            rotation 0.5773506025225372 -0.5773506025225372 0.5773496025232256 2.0944
+            translation -0.15159999999999996 -0.0884999999999998 -0.16199999999999998
+            rotation 0.577350602518522 -0.5773506025185231 0.5773496025312549 2.0943999999879552
             children [
               DEF Wheel Shape {
                 appearance PBRAppearance {
@@ -149,18 +151,18 @@ Robot {
             boundingObject USE Wheel
             physics Physics {
             }
-            linearVelocity 5.283091414296019e-10 -1.0770781591155134e-05 4.742985518226555e-16
-            angularVelocity 6.876184168304836e-15 5.391837990373555e-16 -1.3045941358561676e-10
+            linearVelocity -8.248648144450518e-10 0.00015998617565040282 -1.7094008544763768e-15
+            angularVelocity -2.7446885529577536e-14 -7.161620817882027e-16 7.545520812690777e-08
           }
         }
         Hinge2Joint {
           jointParameters HingeJointParameters {
-            position 3.026882858743805e-17
+            position 8.799826139268128e-16
             axis 0 1 0
             anchor 0.152 -0.0885 -0.162
           }
           jointParameters2 JointParameters {
-            position -4.831314994878556e-16
+            position 6.625932170555708e-16
             axis 1 0 0
           }
           device [
@@ -168,6 +170,7 @@ Robot {
               name "PWM[11]"
             }
             PositionSensor {
+              name "PhoenixSensor[11]"
             }
           ]
           device2 [
@@ -176,8 +179,8 @@ Robot {
             }
           ]
           endPoint Solid {
-            translation 0.1516 -0.0885 -0.162
-            rotation 0.5773506025225371 -0.5773506025225371 0.5773496025232258 2.0943999999999994
+            translation 0.15159999999999998 -0.0884999999999998 -0.16199999999999998
+            rotation 0.577350602522538 -0.5773506025225372 0.5773496025232249 2.094399999999999
             children [
               DEF Wheel Shape {
                 appearance PBRAppearance {
@@ -192,8 +195,8 @@ Robot {
             boundingObject USE Wheel
             physics Physics {
             }
-            linearVelocity -5.073444827427035e-10 -1.0770831479979827e-05 3.5020783284297855e-16
-            angularVelocity 5.713984395016848e-15 -1.7708419287456994e-16 -1.9926972500647844e-10
+            linearVelocity -6.578986026413593e-10 0.00015998951740087952 -1.7589509796193824e-15
+            angularVelocity -2.6819679336431528e-14 -2.3411115883185497e-15 -5.2096194748825176e-08
           }
         }
         DEF Base Shape {
@@ -215,5 +218,8 @@ Robot {
   }
   physics Physics {
   }
-  controller "WPILibWebSocketsToWebots"
+  controller "DeepBlueSim"
+  supervisor TRUE
+  linearVelocity -1.1965321382447236e-09 5.374075625930701e-07 -2.6923888511518456e-15
+  angularVelocity -2.6310241126612047e-14 7.585112080475777e-17 1.165912997985458e-08
 }

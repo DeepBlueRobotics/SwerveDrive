@@ -47,7 +47,7 @@ public class SwerveModule {
                         double maxSpeed, boolean reversed, int turnZero, int maxAnalog) {
         this.timer = new Timer();
         timer.start();
-
+        
         this.type = type;
 
         switch (type) {
