@@ -35,15 +35,15 @@ Robot {
           }
           device [
             RotationalMotor {
-              name "PWM[10]"
+              name "Talon SRX[10]"
             }
             PositionSensor {
-              name "PhoenixSensor[10]"
+              name "Talon SRX[10] Encoder"
             }
           ]
           device2 [
             RotationalMotor {
-              name "PWM[14]"
+              name "Talon SRX[14]"
             }
           ]
           endPoint Solid {
@@ -79,15 +79,15 @@ Robot {
           }
           device [
             RotationalMotor {
-              name "PWM[5]"
+              name "Talon SRX[5]"
             }
             PositionSensor {
-              name "PhoenixSensor[5]"
+              name "Talon SRX[5] Encoder"
             }
           ]
           device2 [
             RotationalMotor {
-              name "PWM[1]"
+              name "Talon SRX[1]"
             }
           ]
           endPoint Solid {
@@ -123,15 +123,15 @@ Robot {
           }
           device [
             RotationalMotor {
-              name "PWM[4]"
+              name "Talon SRX[4]"
             }
             PositionSensor {
-              name "PhoenixSensor[4]"
+              name "Talon SRX[4] Encoder"
             }
           ]
           device2 [
             RotationalMotor {
-              name "PWM[0]"
+              name "Talon SRX[0]"
             }
           ]
           endPoint Solid {
@@ -167,15 +167,15 @@ Robot {
           }
           device [
             RotationalMotor {
-              name "PWM[11]"
+              name "Talon SRX[11]"
             }
             PositionSensor {
-              name "PhoenixSensor[11]"
+              name "Talon SRX[11] Encoder"
             }
           ]
           device2 [
             RotationalMotor {
-              name "PWM[15]"
+              name "Talon SRX[15]"
             }
           ]
           endPoint Solid {
