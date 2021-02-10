@@ -59,7 +59,7 @@ public final class Constants {
         public static final double[] kAccels = {0.0, 0.0, 0.0, 0.0};
         public static final double[] kVolts = {0.0, 0.0, 0.0, 0.0};
 
-        public static final double kDriveModifier = 0.6;
+        public static final double kDriveModifier = 1.0;
 
         // Whether or not steering should be reversed
         public static final boolean reversed[] = {false, false, false, false};
@@ -75,7 +75,7 @@ public final class Constants {
         // Increasing the analog encoder is counter-clockwise, decreasing is clockwise.
         public static final int TURN_ZERO[] = {820, 670, 850, 187};
 
-        // The actual analog encoder maxmimum positions, since 5V is not supplied to each of the analog encoders.
+        // The empirically-measured analog encoder maxmimum values since 5V is not supplied to each of the analog encoders.
         public static final int MAX_ANALOG[] = {886, 882, 877, 880};
     }
 

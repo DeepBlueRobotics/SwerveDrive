@@ -14,8 +14,8 @@ RectangleArena {
   floorSize 10 10
 }
 Robot {
-  translation -2.9003257405302895e-07 0.0821466432242669 -5.796146372280464e-13
-  rotation -2.1381191572311983e-06 -9.533766105630796e-06 0.9999999999522678 2.3056003032458183e-08
+  translation -2.894916276704967e-07 0.08214669637323631 -5.785019634611125e-13
+  rotation -2.1761642965144473e-06 -1.2970602081855947e-05 0.999999999913514 1.6935858487425998e-08
   children [
     Solid {
       translation 0 0.0635 0
@@ -25,17 +25,18 @@ Robot {
         }
         Hinge2Joint {
           jointParameters HingeJointParameters {
-            position 7.660075906891375e-16
+            position 9.527359555946845e-16
             axis 0 1 0
             anchor 0.152 -0.0885 0.162
           }
           jointParameters2 JointParameters {
-            position 5.965373526639451e-16
+            position 7.949251744051113e-16
             axis 1 0 0
           }
           device [
             RotationalMotor {
               name "Talon SRX[10]"
+              maxVelocity 7.861
             }
             PositionSensor {
               name "Talon SRX[10] Encoder"
@@ -44,11 +45,12 @@ Robot {
           device2 [
             RotationalMotor {
               name "Talon SRX[14]"
+              maxVelocity 83.681
             }
           ]
           endPoint Solid {
             translation 0.15159999999999998 -0.0884999999999998 0.16200000000000003
-            rotation 0.5773506025225384 -0.5773506025225372 0.5773496025232243 2.094399999999999
+            rotation 0.577350602522539 -0.5773506025225372 0.5773496025232239 2.094399999999999
             children [
               DEF Wheel Shape {
                 appearance PBRAppearance {
@@ -63,23 +65,24 @@ Robot {
             boundingObject USE Wheel
             physics Physics {
             }
-            linearVelocity -6.578999227874073e-10 0.00015998951739968286 -1.6889945711675792e-15
-            angularVelocity -2.6694083292893926e-14 -1.693006031583398e-15 -5.209614012253196e-08
+            linearVelocity -7.363111055124708e-10 7.51206405235167e-07 -4.7339524494781067e-17
+            angularVelocity 1.0318738780555115e-16 -1.7363061814725735e-15 -3.849970119972266e-10
           }
         }
         Hinge2Joint {
           jointParameters HingeJointParameters {
-            position 8.972879477305434e-16
+            position 1.011031921364176e-15
             axis 0 1 0
             anchor -0.152 -0.0885 0.162
           }
           jointParameters2 JointParameters {
-            position 8.369115161402117e-16
+            position 1.0146630741874214e-15
             axis 1 0 0
           }
           device [
             RotationalMotor {
               name "Talon SRX[5]"
+              maxVelocity 7.861
             }
             PositionSensor {
               name "Talon SRX[5] Encoder"
@@ -88,11 +91,12 @@ Robot {
           device2 [
             RotationalMotor {
               name "Talon SRX[1]"
+              maxVelocity 83.681
             }
           ]
           endPoint Solid {
             translation -0.15159999999999996 -0.0884999999999998 0.16200000000000003
-            rotation 0.5773506025218 -0.5773506025217974 0.5773496025247027 2.09439999999778
+            rotation 0.5773506025218006 -0.5773506025217974 0.5773496025247021 2.09439999999778
             children [
               DEF Wheel Shape {
                 appearance PBRAppearance {
@@ -107,13 +111,13 @@ Robot {
             boundingObject USE Wheel
             physics Physics {
             }
-            linearVelocity -8.248643215037369e-10 0.00015998617567194177 -1.6491021308696073e-15
-            angularVelocity -2.5964160691378472e-14 7.943973396159075e-17 7.545519902252238e-08
+            linearVelocity 7.41056474906453e-10 7.512182492527695e-07 -1.4324775819561678e-17
+            angularVelocity -7.388089653881007e-16 -1.0098494669302477e-15 3.1119688952031406e-10
           }
         }
         Hinge2Joint {
           jointParameters HingeJointParameters {
-            position -3.068803974660971e-16
+            position -2.859767727092677e-16
             axis 0 1 0
             anchor -0.152 -0.0885 -0.162
           }
@@ -124,6 +128,7 @@ Robot {
           device [
             RotationalMotor {
               name "Talon SRX[4]"
+              maxVelocity 7.861
             }
             PositionSensor {
               name "Talon SRX[4] Encoder"
@@ -132,11 +137,12 @@ Robot {
           device2 [
             RotationalMotor {
               name "Talon SRX[0]"
+              maxVelocity 83.681
             }
           ]
           endPoint Solid {
             translation -0.15159999999999996 -0.0884999999999998 -0.16199999999999998
-            rotation 0.577350602518522 -0.5773506025185231 0.5773496025312549 2.0943999999879552
+            rotation 0.5773506025185219 -0.5773506025185232 0.5773496025312552 2.0943999999879552
             children [
               DEF Wheel Shape {
                 appearance PBRAppearance {
@@ -151,23 +157,24 @@ Robot {
             boundingObject USE Wheel
             physics Physics {
             }
-            linearVelocity -8.248648144450518e-10 0.00015998617565040282 -1.7094008544763768e-15
-            angularVelocity -2.7446885529577536e-14 -7.161620817882027e-16 7.545520812690777e-08
+            linearVelocity 7.410571952516961e-10 7.512182432698601e-07 3.926163640487117e-17
+            angularVelocity 4.507785462133202e-16 -8.205390802369612e-17 3.111786807531683e-10
           }
         }
         Hinge2Joint {
           jointParameters HingeJointParameters {
-            position 8.799826139268128e-16
+            position 9.612516204848671e-16
             axis 0 1 0
             anchor 0.152 -0.0885 -0.162
           }
           jointParameters2 JointParameters {
-            position 6.625932170555708e-16
+            position 9.16486260797364e-16
             axis 1 0 0
           }
           device [
             RotationalMotor {
               name "Talon SRX[11]"
+              maxVelocity 7.861
             }
             PositionSensor {
               name "Talon SRX[11] Encoder"
@@ -176,11 +183,12 @@ Robot {
           device2 [
             RotationalMotor {
               name "Talon SRX[15]"
+              maxVelocity 83.681
             }
           ]
           endPoint Solid {
             translation 0.15159999999999998 -0.0884999999999998 -0.16199999999999998
-            rotation 0.577350602522538 -0.5773506025225372 0.5773496025232249 2.094399999999999
+            rotation 0.5773506025225384 -0.5773506025225372 0.5773496025232243 2.094399999999999
             children [
               DEF Wheel Shape {
                 appearance PBRAppearance {
@@ -195,8 +203,8 @@ Robot {
             boundingObject USE Wheel
             physics Physics {
             }
-            linearVelocity -6.578986026413593e-10 0.00015998951740087952 -1.7589509796193824e-15
-            angularVelocity -2.6819679336431528e-14 -2.3411115883185497e-15 -5.2096194748825176e-08
+            linearVelocity -7.363115503373466e-10 7.512063884828208e-07 5.146912611827698e-19
+            angularVelocity -7.460460954672844e-17 -6.748498078671771e-16 -3.8501522076130383e-10
           }
         }
         DEF Base Shape {
@@ -220,6 +228,6 @@ Robot {
   }
   controller "DeepBlueSim"
   supervisor TRUE
-  linearVelocity -1.1965321382447236e-09 5.374075625930701e-07 -2.6923888511518456e-15
-  angularVelocity -2.6310241126612047e-14 7.585112080475777e-17 1.165912997985458e-08
+  linearVelocity 3.7368335661081186e-12 -1.7488942333785176e-09 6.474937208706458e-17
+  angularVelocity 9.291012494429457e-16 1.295205774328766e-16 -3.700159532317513e-11
 }
