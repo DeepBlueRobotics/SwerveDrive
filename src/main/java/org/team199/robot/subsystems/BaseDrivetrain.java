@@ -23,7 +23,7 @@ public abstract class BaseDrivetrain extends SubsystemBase {
         // Initialize SwerveModules
         // Forward-Left
 
-        //resets gyro before odometry is declared
+        // Reset gyro before odometry is declared
         gyro.reset();
 
         SwerveModule moduleFL = new SwerveModule(SwerveModule.ModuleType.FL,
@@ -31,28 +31,28 @@ public abstract class BaseDrivetrain extends SubsystemBase {
                                     MotorControllerFactory.createTalon(Constants.Ports.kTurnFrontLeft), 
                                     Constants.DriveConstants.GEAR_RATIO[0], -Constants.DriveConstants.kDriveModifier, 
                                     Constants.DriveConstants.maxSpeed, Constants.DriveConstants.reversed[0],
-                                    Constants.DriveConstants.TURN_ZERO[0], Constants.DriveConstants.MAX_ANALOG[0]);
+                                    Constants.DriveConstants.TURN_ZERO[0], Constants.DriveConstants.MAX_ANALOG[0], Constants.DriveConstants.kVolts[0]);
         // Forward-Right
         SwerveModule moduleFR = new SwerveModule(SwerveModule.ModuleType.FR,
                                     MotorControllerFactory.createTalon(Constants.Ports.kDriveFrontRight), 
-                                    MotorControllerFactory.createTalon(Constants.Ports.kTurnFrontRight), 
+                                    MotorControllerFactory.createTalon(Constants.Ports.kTurnFrontRight),
                                     Constants.DriveConstants.GEAR_RATIO[1], Constants.DriveConstants.kDriveModifier,
                                     Constants.DriveConstants.maxSpeed, Constants.DriveConstants.reversed[1],
-                                    Constants.DriveConstants.TURN_ZERO[1], Constants.DriveConstants.MAX_ANALOG[1]);
+                                    Constants.DriveConstants.TURN_ZERO[1], Constants.DriveConstants.MAX_ANALOG[1], Constants.DriveConstants.kVolts[1]);
         // Backward-Left
         SwerveModule moduleBL = new SwerveModule(SwerveModule.ModuleType.BL,
                                     MotorControllerFactory.createTalon(Constants.Ports.kDriveBackLeft), 
-                                    MotorControllerFactory.createTalon(Constants.Ports.kTurnBackLeft), 
+                                    MotorControllerFactory.createTalon(Constants.Ports.kTurnBackLeft),
                                     Constants.DriveConstants.GEAR_RATIO[2], -Constants.DriveConstants.kDriveModifier,
                                     Constants.DriveConstants.maxSpeed, Constants.DriveConstants.reversed[2],
-                                    Constants.DriveConstants.TURN_ZERO[2], Constants.DriveConstants.MAX_ANALOG[2]);
+                                    Constants.DriveConstants.TURN_ZERO[2], Constants.DriveConstants.MAX_ANALOG[2], Constants.DriveConstants.kVolts[2]);
         // Backward-Right
         SwerveModule moduleBR = new SwerveModule(SwerveModule.ModuleType.BR,
                                     MotorControllerFactory.createTalon(Constants.Ports.kDriveBackRight), 
-                                    MotorControllerFactory.createTalon(Constants.Ports.kTurnBackRight), 
+                                    MotorControllerFactory.createTalon(Constants.Ports.kTurnBackRight),
                                     Constants.DriveConstants.GEAR_RATIO[3], Constants.DriveConstants.kDriveModifier,
                                     Constants.DriveConstants.maxSpeed, Constants.DriveConstants.reversed[3],
-                                    Constants.DriveConstants.TURN_ZERO[3], Constants.DriveConstants.MAX_ANALOG[3]);
+                                    Constants.DriveConstants.TURN_ZERO[3], Constants.DriveConstants.MAX_ANALOG[3], Constants.DriveConstants.kVolts[3]);
         modules = new SwerveModule[]{moduleFL, moduleFR, moduleBL, moduleBR};
 
         // Configure PID control constants for drive motor controllers
