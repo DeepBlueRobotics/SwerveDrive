@@ -12,8 +12,6 @@ import edu.wpi.first.wpilibj.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
-import org.team199.robot.Constants;
-
 /**
  * A class that stores all the variables and methods applicaple to a single swerve module,
  * such as moving, getting encoder values, or configuring PID.
@@ -25,7 +23,7 @@ public class SwerveModule {
     private String moduleString;
     private WPI_TalonSRX drive, turn;
     private double gearRatio, driveModifier, maxSpeed;
-    private double targetAngle, expectedSpeed;
+    private double targetAngle;
     private int turnZero, maxAnalog;
     private boolean reversed;
     private Timer timer;
@@ -79,7 +77,6 @@ public class SwerveModule {
         this.reversed = reversed;
         this.turnZero = turnZero;
         this.maxAnalog = maxAnalog;
-        expectedSpeed = 0.0;
 
         catchError(turn.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder));
     }
@@ -103,16 +100,22 @@ public class SwerveModule {
      * @param speed     The desired speed, from -1.0 (maximum speed directed backwards) to 1.0 (maximum speed directed forwards).
      */
     private void setSpeed(double speed) {
-        // There are no encoders on the drive motor controllers so assume current speed = expected speed
         double deltaTime = timer.get();
-        double newExpectedSpeed = maxSpeed * speed * Math.abs(driveModifier);
-        double desiredAcceleration = (newExpectedSpeed - expectedSpeed) / deltaTime;
+
+        double desiredSpeed = maxSpeed * speed * Math.abs(driveModifier);
+
+        // Calculate acceleration and limit it if greater than maximum acceleration (without slippage and with sufficient motors).
+        double desiredAcceleration = (desiredSpeed - getCurrentSpeed()) / deltaTime;
         double maxAcceleration = Constants.DriveConstants.mu * 9.8;
         double clippedAcceleration = Math.copySign(Math.min(Math.abs(desiredAcceleration), maxAcceleration), desiredAcceleration);
-        expectedSpeed += clippedAcceleration * deltaTime;
+        
+        double clippedDesiredSpeed = getCurrentSpeed() + clippedAcceleration * deltaTime;
+
+        // Reset the timer so get() returns a change in time
         timer.reset();
         timer.start();
-        drive.set(ControlMode.PercentOutput, Math.copySign(expectedSpeed, expectedSpeed * driveModifier) / maxSpeed);
+        
+        drive.set(ControlMode.PercentOutput, Math.copySign(clippedDesiredSpeed, clippedDesiredSpeed * driveModifier) / maxSpeed);
     }
 
     /**
@@ -161,7 +164,15 @@ public class SwerveModule {
      * @return A SwerveModuleState object representing the speed and angle of the module.
      */
     public SwerveModuleState getCurrentState() {
-        return new SwerveModuleState(expectedSpeed, new Rotation2d(getModuleAngle()));
+        return new SwerveModuleState(getCurrentSpeed(), new Rotation2d(getModuleAngle()));
+    }
+
+    public double getCurrentSpeed() {
+        // Calculate expected speed using applied voltage and current.
+        double expectedOmega = (drive.getMotorOutputVoltage() - drive.getStatorCurrent() * Constants.DriveConstants.motorResistance) / Constants.DriveConstants.k;
+        expectedOmega = expectedOmega * Math.signum(driveModifier);
+        double expectedSpeed = (Constants.DriveConstants.wheelDiameter / 2) * (expectedOmega / Constants.DriveConstants.driveGearing);
+        return expectedSpeed;
     }
 
     /**
@@ -178,8 +189,12 @@ public class SwerveModule {
         SmartDashboard.putNumber(moduleString + " Raw Analog Position", turn.getSensorCollection().getAnalogInRaw());
         // Display the module angle as calculated using the absolute encoder.
         SmartDashboard.putNumber(moduleString + " Module Angle", getModuleAngle());
-        //expected SPEEEEEEEEEEEEEEEEEEEEEEEEEEEEED
-        SmartDashboard.putNumber(moduleString + " Expected Speed: ", expectedSpeed);
+        // Display the speed that the robot thinks it is travelling at.
+        SmartDashboard.putNumber(moduleString + " Current Speed", getCurrentSpeed());
+        // Display the applied voltage to the drive motor.
+        SmartDashboard.putNumber(moduleString + " Applied Voltage", drive.getMotorOutputVoltage());
+        // Display the output current of the drive motor.
+        SmartDashboard.putNumber(moduleString + " Stator Current", drive.getStatorCurrent());
     }
 
     /**

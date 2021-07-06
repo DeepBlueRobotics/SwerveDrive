@@ -7,11 +7,8 @@
 
 package org.team199.robot.subsystems;
 
-import com.kauailabs.navx.frc.AHRS;
-
 import org.team199.robot.Constants;
 
-import edu.wpi.first.wpilibj.SerialPort;
 import edu.wpi.first.wpilibj.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.geometry.Translation2d;
 import edu.wpi.first.wpilibj.kinematics.ChassisSpeeds;

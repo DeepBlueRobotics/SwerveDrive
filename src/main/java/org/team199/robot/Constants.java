@@ -26,7 +26,19 @@ public final class Constants {
     }
 
     public static final class DriveConstants {
-        //mu for max accleration
+        // 5330 is the experimental free speed of a CIM motor controller in rev/s
+        // Convert rev/min to rad/s.
+        public static final double CIMFreeSpeed = 5330 * (2 * Math.PI) / 60;
+        // The gearing between the drive motor controller and the wheels.
+        public static final double driveGearing = 6.67;
+        public static final double wheelDiameter = 4.0 * inchToMeter;
+        // k is used in estimating the expected speed for odometry.
+        // k = Maximum Volts / Max Angular Velocity.
+        public static final double k = 12.0 / CIMFreeSpeed;
+        // Stall current of a CIM motor is 133 Amps at 12 Volts.
+        public static final double motorResistance = 12.0 / 133.0;
+
+        // Coefficient of static friction for max accleration
         public static final double mu = 0.1;
         // Original units are in inches and must be converted to meters.
         public static final double wheelBase = 18.15 * inchToMeter;
@@ -35,9 +47,9 @@ public final class Constants {
         // The maximum drive speed (in ft/s for a CIM motor) is listed on the AndyMark page for the Swerve and Steer module.
         // maxForward and maxStrafe are in m/s, maxRCW is in radians, and maxSpeed is in m/s.
         // Speed is the same for maxForward, maxStrafe, and maxSpeed since they are all equal to the max speed for the drive motor 
-        public static final double maxForward = 11.5 * 12 * inchToMeter;
-        public static final double maxStrafe = 11.5 * 12 * inchToMeter;
-        public static final double maxSpeed = 11.5 * 12 * inchToMeter;
+        public static final double maxSpeed = CIMFreeSpeed * (wheelDiameter / 2.0) / driveGearing;
+        public static final double maxForward = maxSpeed;
+        public static final double maxStrafe = maxSpeed;
         // maxRCW is the angular velocity of the robot.
         // Calculated by looking at one of the motors and treating it as a point mass moving around in a circle.
         // Tangential speed of this point mass is maxSpeed and the radius of the circle is sqrt((wheelBase/2)^2 + (trackWidth/2)^2)
